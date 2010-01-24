@@ -1,0 +1,112 @@
+<html>
+<head>
+	<title>HooverNotes SlideBar</title>
+	<link href="CSS/hoover.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
+		<div id='menu_container' class='menu_container'>
+			<div id='user_container' class='user_container'>
+				<div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div>
+				<div id='user_name' class='user_name'>YOUR NAME</div>
+			</div>
+			<div id='menuContainer_buttons' class='button menuContainer_buttons'>
+				<div><img src='IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div>
+			</div>
+		</div>
+		<div id='hncontent' class='container sheets_container'>
+
+<!-- SHEETCONTAINER_HTML -->
+<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'>
+	<div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'>
+		<div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'>
+		
+		<!-- NEWSHEETDEF_CONTAINER-->
+		<div id='newSheetDef_container'>
+			<input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input_yellow' value='Untitled' />
+			<!--<button id='newSheetDef_button'>Create</button>-->
+
+			<div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'>
+				<img src='IMG/minim_yelow.png' id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button' alt='Minimize Sheet' title='Minimize Sheet' />
+				<img src='IMG/close_yelow.png' id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button' alt='Remove Sheet' title='Remove Sheet' />
+			</div>
+		</div>
+		<!-- NEWSHEETDEF_CONTAINER-->
+			
+		</div>
+		<div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'>
+			<img src='IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' />
+			<img src='IMG/separador_bot.png' />
+			<img src='IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' />
+			<img src='IMG/separador_bot.png' />
+			<img src='IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' />
+			<img src='IMG/separador_bot.png' />
+			<img src='IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' />
+			<img src='IMG/separador_bot.png' />
+			<img src='IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' />
+		</div>
+	</div>
+
+
+<!-- PAGE_HTML -->
+
+<div id='hncontainer_sh_sheetguid_p_pageguid' class='hncontainer page_hncontainer page_container'>
+	<div id='hncontrols_sh_sheetguid_p_pageguid' class="page_hncontrols hncontrols">
+		<div id='hntitle_sh_sheetguid_p_pageguid' class='page_hntitle pageTitle'><a	href='#' class="pageTitle_link" alt='Open page in new tab'>pagetitle of focused tab</a></div>
+		<div id='hnbuttons_sh_sheetguid_p_pageguid' class='page_hnbuttons buttons pageButtons'>
+			<img src='IMG/link_black.png' id='linkHnButton_sh_sheetguid_p_pageguid' class='button openURLatTab_button' alt='Open the URL in a new tab' title='Open the URL in a new tab' />
+			<img src='IMG/minim_black.png' id='minimizeHnButton_sh_sheetguid_p_pageguid' class='button minimizePage_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' />
+			<img src='IMG/close_black.png' id='removeHnButton_sh_sheetguid_p_pageguid' class='button removePage_button' alt='Remove the page s annotations' title='Remove the page s annotations' />
+		</div>
+	</div>
+	<div id='hncontent_sh_sheetguid_p_pageguid' class="page_hncontent hncontent">
+
+<!-- NOTE_HTML-->
+
+<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid' class="hncontainer note_hncontainer">
+	<div id='hncontrols_sh_sheetguid_p_pageguid_n_noteguid'>
+		<div id='hntitle_sh_sheetguid_p_pageguid_n_noteguid' class='note_hntitle'></div>
+		<div id='hnbuttons_sh_sheetguid_p_pageguid_n_noteguid' class='hnbuttons note_hnbuttons buttons note_buttons'>
+			<img src='IMG/lapiz.png' id='toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button toggleNote_button' alt='Toggle annotations' title='Toogle annotation' />
+			<img src='IMG/marcador.png' id='turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button annotateNote_button' alt='Edit annotation' title='Edit annotation' />
+			<img src='IMG/minim_black.png' id='minimizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button minimizeNote_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' />
+			<img src='IMG/expand_black.png' id='maximizeHnButton_button_sh_sheetguid_p_pageguid_n_noteguid' class='button maximizeNote_button' alt='Expand the page s annotations' title='Expand the page s annotations' />
+			<img src='IMG/close_black.png' id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button' alt='Remove the page s annotations' title='Remove the page s annotations' />
+		</div>
+	</div>
+	<div id='content_sh_sheetguid_p_pageguid_n_noteguid' class='hncontainer note_hncontainer noteContent_container'>
+
+<!-- ANNOTATENOTE_HTML -->
+<div id='annotateNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'>
+	<textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br />
+	<button id='noteeditor_button_sh_sheetguid_p_pageguid_n_noteguid'>OK</button>
+</div>
+<!-- ANNOTATENOTE_HTML -->
+
+	</div>
+</div>
+
+<!-- NOTE_HTML-->
+
+	</div>
+
+</div>
+
+<!-- PAGE_HTML -->
+
+<!-- TAG_HTML -->
+	<div id='newTag_container' class='newTag_container'>
+		<input type='text' id='newTag_input' value='tag3' />
+		<button id='newTag_button'>Create</button><br />
+		<span id='tag'>tag1</span>, <span id='tag'>tag2</span>
+	</div>
+<!-- TAG HTML-->
+
+		</div> <!-- sheet_container end-->
+
+	</div>
+</div>
+<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script>
+
+</body>
+</html>
