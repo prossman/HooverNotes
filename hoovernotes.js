@@ -1,10 +1,10 @@
-// IMPORTS
+//IMPORTS
 jetpack.future.import("slideBar");
 jetpack.future.import("selection");
 jetpack.future.import("storage.simple");
 jetpack.future.import("menu");
 
-// CONSTANTS
+//CONSTANTS
 /* Note types. */
 const HIGHLIGHTED_NOTE = "HIGHLIGHTED_NOTE";
 const MOVED_NOTE = "MOVED_NOTE";
@@ -13,7 +13,7 @@ const SLIDEBAR_WIDTH = 800;
 
 var _ID_STRING="_sh_sheetguid_p_pageguid_n_noteguid";
 
-// GUI IDS
+//GUI IDS
 /* Container for current sheet. */
 var SHEET_CONTAINER_ = "sheet_container_";
 /* Container for the overall slide bar. */
@@ -86,29 +86,29 @@ var HIGHLIGHTNOTE_HTML="<div id='highlightNoteContent_sh_sheetguid_p_pageguid_n_
  */
 function Utils(){
 	function S4() {
-	    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 	};
 	this.guid = function (){
-	    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+		return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 	};
 	this.replaceIds = function (setSheetId, setPageId, setNoteId, rawId){
-	    if (rawId){
-	        if (setSheetId && hooverNotesGui.activeSheet){
-	          rawId = rawId.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
-	        }
-	        if (setPageId && hooverNotesGui.activePage){
-	          rawId = rawId.replace(/pageguid/g, hooverNotesGui.activePage.pageGuid);
-	        }
-	        if (setNoteId && hooverNotesGui.activeNote){
-	          rawId = rawId.replace(/noteguid/g, hooverNotesGui.activeNote.noteGuid);
-	        }
-	      } else {
-	          return null;
-	      }
-	      // console.log("replaceIds: returns " + rawId);
-	      return rawId;
+		if (rawId){
+			if (setSheetId && hooverNotesGui.activeSheet){
+				rawId = rawId.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
+			}
+			if (setPageId && hooverNotesGui.activePage){
+				rawId = rawId.replace(/pageguid/g, hooverNotesGui.activePage.pageGuid);
+			}
+			if (setNoteId && hooverNotesGui.activeNote){
+				rawId = rawId.replace(/noteguid/g, hooverNotesGui.activeNote.noteGuid);
+			}
+		} else {
+			return null;
+		}
+		// console.log("replaceIds: returns " + rawId);
+		return rawId;
 	};
-	
+
 	/**
 	 * 
 	 */
@@ -121,102 +121,104 @@ function Utils(){
 	};
 
 	this.stripHtmlString = function (htmlString){
-	    // Should remove: style, input, button, forms, script (?)
-	    //TODO
+		// Should remove: style, input, button, forms, script (?)
+		//TODO
 	};
 }
 
-// DATATYPES
+//DATATYPES
 /**
  * HooverSheet. Top-most container.
  */
 function HooverSheet(title, user, language, shared, editable) {
-    this.title = title;
-    this.owner = user;
-    this.creationTime = new Date();
-    this.lastModifiedTime = new Date();
-    if (!language) {
-        this.language = "en";
-    } else {
-        this.language = language;
-    }
-    this.guid = utils.guid();
-    this.shared = shared;
-    this.editable = editable;
-   
-    this.getHooverPageForUrl = function (url, urlTitle){
-        console.log("HooverSheet.getHooverPageForUrl");
-       
-        if (hooverNotesGui.activePage && (hooverNotesGui.activePage.pageUrl == url)){
-            return hooverNotesGui.activePage;
-        } else {
-            var tmpPage;
-            if (url == "http://en.wikipedia.org/wiki/"){
-              console.log("Wikipedia, cabrón!");
-              // TODO search the page and make it activePage
-              return hooverNotesGui.activePage = new HooverPage (url, "Marica", null);
-            } else {
-              return null;
-            }
-        }
-    };
-    this.addHooverPageForUrl = function (url, urlTitle){
-        console.log("A joder el puto addHoverPageForUrl");
-        return hooverNotesGui.activePage = new HooverPage (url, urlTitle, null);
-    };
+	this.title = title;
+	this.owner = user;
+	this.creationTime = new Date();
+	this.lastModifiedTime = new Date();
+	if (!language) {
+		this.language = "en";
+	} else {
+		this.language = language;
+	}
+	this.guid = utils.guid();
+	this.shared = shared;
+	this.editable = editable;
+
+	this.getHooverPageForUrl = function (url, urlTitle){
+		console.log("HooverSheet.getHooverPageForUrl");
+
+		if (hooverNotesGui.activePage && (hooverNotesGui.activePage.pageUrl == url)){
+			return hooverNotesGui.activePage;
+		} else {
+			var tmpPage;
+			if (url == "http://en.wikipedia.org/wiki/"){
+				console.log("Wikipedia, cabrón!");
+				// TODO search the page and make it activePage
+				return hooverNotesGui.activePage = new HooverPage (url, "Marica", null);
+			} else {
+				return null;
+			}
+		}
+	};
+	this.addHooverPageForUrl = function (url, urlTitle){
+		console.log("A joder el puto addHoverPageForUrl");
+		return hooverNotesGui.activePage = new HooverPage (url, urlTitle, null);
+	};
 }
 
 /* HooverNote */
 function HooverNote(user, originalHtml, isHighlighted, color, annotation) {
-    this.noteAuthor = user;
-    this.noteCreationTime = new Date();
-    this.noteLastModifiedTime = new Date();
-    this.noteOriginalHtml = originalHtml;
-    this.noteIsHighlighted = isHighlighted;
-    this.noteColor = color;
-    this.noteAnnotation = annotation;
-    this.noteGuid = utils.guid();
-   
-    this.getType = function(){
-        if (this.noteAnnotation){
-            return ANNOTATED_NOTE;
-        } else {
-            if (this.noteIsHighlighted && this.noteColor){
-                return HIGHLIGHTED_NOTE;
-            } else {
-                return MOVED_NOTE;
-            }
-        }
-    };
+	this.noteAuthor = user;
+	this.noteCreationTime = new Date();
+	this.noteLastModifiedTime = new Date();
+	this.noteOriginalHtml = originalHtml;
+	this.noteIsHighlighted = isHighlighted;
+	this.noteColor = color;
+	this.noteAnnotation = annotation;
+	this.noteGuid = utils.guid();
+
+	this.getType = function(){
+		if (this.noteAnnotation){
+			return ANNOTATED_NOTE;
+		} else {
+			if (this.noteIsHighlighted && this.noteColor){
+				return HIGHLIGHTED_NOTE;
+			} else {
+				return MOVED_NOTE;
+			}
+		}
+	};
 }
 
 /* HooverPage */
 function HooverPage(pageUrl, pageTitle, pageHtml){
-    this.pageTitle = pageTitle;
-    this.pageHtml = pageHtml;
-    this.pageUrl = pageUrl;
-    this.pageGuid = utils.guid();
-   
-    this.addHooverNoteForPage = function(user, originalHtml, isHighlighted, color, annotation){
-        console.log("addHooverNoteForPage: " + user + " - " + originalHtml);
-        return hooverNotesGui.activeNote = new HooverNote (user, originalHtml, isHighlighted, color, annotation);
-    };
+	this.pageTitle = pageTitle;
+	this.pageHtml = pageHtml;
+	this.pageUrl = pageUrl;
+	this.pageGuid = utils.guid();
+
+	this.addHooverNoteForPage = function(user, originalHtml, isHighlighted, color, annotation){
+		console.log("addHooverNoteForPage: " + user + " - " + originalHtml);
+		return hooverNotesGui.activeNote = new HooverNote (user, originalHtml, isHighlighted, color, annotation);
+	};
 }
 
 /* User */
 function User (userName, credential, imgURL){
-    this.userName = userName;
-    this.credential = credential;
-    this.imgURL = imgURL;
-    this.logged = false;
+	this.userName = userName;
+	this.credential = credential;
+	this.imgURL = imgURL;
+	this.logged = false;
 }
 
 function HooverNotesView(slideBar, controller){
 	this.slideBar = slideBar;
-	
+	this.contentDocument = slideBar.contentDocument;
+	this.controller;
+
 	this.minimize = function (idString){
 		console.log("View.minimize() " + idString);
-		
+
 		// for the moment: pageNote_container
 		var containerId = "pageNote_container";
 		// get sheet id
@@ -227,7 +229,7 @@ function HooverNotesView(slideBar, controller){
 		jetpack.notifications.show("View.minimize() " + containerId);
 		$("#" + containerId, this.slideBar.contentDocument).hide();
 	};
-	
+
 	this.maximize = function (idString){
 		console.log("View.maximize() " + idString);
 //		jetpack.notifications.show("View.maximize() " + idString);
@@ -241,38 +243,146 @@ function HooverNotesView(slideBar, controller){
 		jetpack.notifications.show("View.maximize() " + containerId);
 		$("#" + containerId, this.slideBar.contentDocument).show();
 	};
-	
-	this.remove = function (idString){
+
+	/**
+	 * Removes the element identified by <code>idString</code> from the view.
+	 * @param isToBeConfirmed Boolean indicating if a user confirmation is desired.
+	 */
+	this.remove = function (idString, isToBeConfirmed){
 		console.log("View.remove() " + idString);
+		$("#" + idString, this.contentDocument).remove();
 	};
+
+	this.updateGUIForNewSheet = function(message) {
+		// console.log("updateGUIForNewSheet:" + message);
+		// 1) if there is an existing activeSheet --> syncronize the data with the
+		// repository
+		// 2) show sheet definition GUI
+		// Create input area etc. so that the user can enter the sheet title.
+		var newSheetDef = $(NEWSHEETDEF_HTML, this.contentDocument);
+
+		$("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
+		// 3) register the eventHandler
+		$("#" + NEWSHEETDEF_BUTTON, hooverNotesGui.slideBar.contentDocument).click(function(){
+			handleNewSheetData();
+		});
+		// 4) wait for user to insert data and confirm
+		// 5) create new HooverSheet object with the confirmed data.
+	}
+
+	this.handleNewSheetData = function() {
+		// console.log("handleNewSheet getting title");
+		// extract data from the form
+		var title = $("#" + NEWSHEETDEFTITLE_INPUT, hooverNotesGui.slideBar.contentDocument).val();
+		console.log("handleNewSheet title:" + title);
+		if (!title){
+			title="untitled";
+		}
+		hooverNotesGui.addNewSheet(title, "en", true, true);
+	}
+
+	/**
+	 * Initializes the GUI. Shall be called from controller's init() function.
+	 */
+	this.init = function(){};
 }
 
 /**/
 function HooverNotesController(slideBar){
-    /* Gives access to the view. */
-    this.view;
-    /* Gives access to the storage. */
-    this.storage;
-    /* Currently logged in user. */
-    this.user=null;
-    /* Sheet in use. */
-    this.activeSheet=null;
-    // /this.oldActiveSheet=null;
-    /* Page in use. */
-    this.activePage = null;
-    /* Note in use. */
-    this.activeNote = null;
-    /* Array with the user' sheets. */
-    this.tabSheets=null;
-    /* Array and storage of the user' sheets and notes of each sheet. 
-     * The topmost sheet is the one currently in display.
-     */
-    this.sheetsArray=new Array();
-    /* Gives global access to the slide bar. */
-    this.slideBar=slideBar;
+	/* Gives access to the view. */
+	this.view;
+	/* Gives access to the storage. */
+	this.storage;
+	/* Currently logged in user. */
+	this.user=null;
+	/* Sheet in use. */
+	this.activeSheet=null;
+	// /this.oldActiveSheet=null;
+	/* Page in use. */
+	this.activePage = null;
+	/* Note in use. */
+	this.activeNote = null;
+	/* Array with the user' sheets. */
+	this.tabSheets=null;
+	/* Array and storage of the user' sheets and notes of each sheet. 
+	 * The topmost sheet is the one currently in display.
+	 */
+	this.sheetsArray=new Array();
+	/* Gives global access to the slide bar. */
+	this.slideBar=slideBar;
+
+	/**
+	 * Returns information about the current user.
+	 * @returns
+	 */
+	var checkUser = function(){
+		console.log("checkUser");
+		this.authenticateUser(null, null);
+		return user;
+	};
+
+	/**
+	 * Receives a username and credentials and checks these against an authentication service. Returns true or false depending on the result of the authentication, and sets this.user accordingly.
+	 */
+	this.authenticateUser = function(username, credentials){
+		this.user = new User("marcpous", "password", "http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG");
+		this.user.logged = true;
+		return true;
+	}
+
+	/**
+	 * Initializes the app. Shall be called at startup.
+	 */
+	this.init = function(){
+		console.log("init");
+		this.user = checkUser();
+
+		if (!this.user.logged){
+			view.openLoginWindow();
+			return;
+		} else {
+			this.initAuthenticatedUser();
+		}
+	};
+
+	this.initAuthenticatedUser = function(){
+		if (this.user && this.user.logged){
+			// Get the sheets from storage.
+			this.sheetsArray = storage.getHooverSheets(this.user);
+			//  
+			if (this.sheetsArray) {
+				view.updateGUIFromSheet(this.sheetsArray[0]); // 4a) initializes the gui from
+			} else {
+				view.updateGUIForNewSheet(null); // 4b) force user to create a new sheet
+			}
+		} else {
+			return;
+		}
+	}
+	
+	this.addNewSheet = function(title, language, shared, editable){
+		// view.updateGUIForNewSheet(null);
+		this.activeSheet = new HooverSheet(title, this.user, language, shared, editable);
+		// sheetsArray.push(newSheet(title));
+		this.view.remove(NEWSHEETDEF_CONTAINER);
+		updateGUIFromActiveSheet();
+	};
+	
+	this.dropToSheet = function(containerid, event){
+		// Extract data.
+		// 
+	};
 }
 
-// GLOBAL VARIABLES
+function HooverNotesStorage(){
+	/**
+	 * Obtains the sheets for this user from storage.
+	 */
+	this.getHooverSheets = function(user){
+	};
+}
+
+//GLOBAL VARIABLES
 var hooverNotesGui;
 var hooverNotesView;
 var utils = new Utils();
@@ -286,93 +396,93 @@ var utils = new Utils();
  *
  */
 
-// -------------------------------------
+//-------------------------------------
 function init() {
-    // 1) validacion del usuario mediante la API de twitter
-    console.log("init");
-    user = checkUser();
+	// 1) validacion del usuario mediante la API de twitter
+	console.log("init");
+	user = checkUser();
 
-    if (!user.logged){
-        openLoginWindow();
-    }
-       
-    // 2) buscar en el storage si existen sheets y notes del usuario
-    sheetsArray = getSheets(user); // sheets_array contain the sheets and
-                                    // the
-    // notes associated with the sheets
+	if (!user.logged){
+		openLoginWindow();
+	}
 
-    // 3) select the active sheet and notes
-    if (sheetsArray != null) {
-        updateGUIFromSheet(activeSheet[0]); // 4a) initializes the gui from
-        // sheet data
-    } else {
-        updateGUIForNewSheet(null); // 4b) force user to create a new sheet
-    }
+	// 2) buscar en el storage si existen sheets y notes del usuario
+	sheetsArray = getSheets(user); // sheets_array contain the sheets and
+	// the
+	// notes associated with the sheets
+
+	// 3) select the active sheet and notes
+	if (sheetsArray != null) {
+		updateGUIFromSheet(activeSheet[0]); // 4a) initializes the gui from
+		// sheet data
+	} else {
+		updateGUIForNewSheet(null); // 4b) force user to create a new sheet
+	}
 }
 
 function checkUser(){
-    console.log("checkUser");
-    user = new User("marcpous", "password", "http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG");
-    user.logged = true;
-    return user;
+	console.log("checkUser");
+	user = new User("marcpous", "password", "http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG");
+	user.logged = true;
+	return user;
 }
 
-// ------------- SHEETS --------------
+//------------- SHEETS --------------
 
 function updateGUIForNewSheet(message) {
-    // console.log("updateGUIForNewSheet:" + message);
-    // 1) if there is an existing activeSheet --> syncronize the data with the
-    // repository
-    // 2) show sheet definition GUI
-    // Create input area etc. so that the user can enter the sheet title.
-    var newSheetDef = $(NEWSHEETDEF_HTML, hooverNotesGui.slideBar.contentDocument);
+	// console.log("updateGUIForNewSheet:" + message);
+	// 1) if there is an existing activeSheet --> syncronize the data with the
+	// repository
+	// 2) show sheet definition GUI
+	// Create input area etc. so that the user can enter the sheet title.
+	var newSheetDef = $(NEWSHEETDEF_HTML, hooverNotesGui.slideBar.contentDocument);
 
-    $("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
-    // 3) register the eventHandler
-    $("#" + NEWSHEETDEF_BUTTON, hooverNotesGui.slideBar.contentDocument).click(function(){
-            handleNewSheetData();
-            });
-    // 4) wait for user to insert data and confirm
-    // 5) create new HooverSheet object with the confirmed data.
+	$("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
+	// 3) register the eventHandler
+	$("#" + NEWSHEETDEF_BUTTON, hooverNotesGui.slideBar.contentDocument).click(function(){
+		handleNewSheetData();
+	});
+	// 4) wait for user to insert data and confirm
+	// 5) create new HooverSheet object with the confirmed data.
 }
 
 function handleNewSheetData() {
-    // console.log("handleNewSheet getting title");
-    // extract data from the form
-    var title = $("#" + NEWSHEETDEFTITLE_INPUT, hooverNotesGui.slideBar.contentDocument).val();
-    console.log("handleNewSheet title:" + title);
-    if (!title){
-        title="untitled";
-    }
-    hooverNotesGui.activeSheet = new HooverSheet(title, hooverNotesGui.user, "en", true, true);
-    // sheetsArray.push(newSheet(title));
-    $("#" + NEWSHEETDEF_CONTAINER, hooverNotesGui.slideBar.contentDocument).remove();
-    updateGUIFromActiveSheet();
+	// console.log("handleNewSheet getting title");
+	// extract data from the form
+	var title = $("#" + NEWSHEETDEFTITLE_INPUT, hooverNotesGui.slideBar.contentDocument).val();
+	console.log("handleNewSheet title:" + title);
+	if (!title){
+		title="untitled";
+	}
+	hooverNotesGui.activeSheet = new HooverSheet(title, hooverNotesGui.user, "en", true, true);
+	// sheetsArray.push(newSheet(title));
+	$("#" + NEWSHEETDEF_CONTAINER, hooverNotesGui.slideBar.contentDocument).remove();
+	updateGUIFromActiveSheet();
 }
 
 function getSheets(user) {
-    // TODO
-    return null;
+	// TODO
+	return null;
 }
 
 /* Takes the active sheet and updates the GUI accordingly. */
 function updateGUIFromActiveSheet() {
-    var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
-    htmlString = htmlString.replace(/subtitle/g, hooverNotesGui.activeSheet.title);
-    var sheetContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
-    $("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(sheetContainer);
-    // Register events for the sheet-related buttons.
-    $("#" + NEWHOOVERNOTE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("newHooverNoteButton y su madre");
-        jetpack.notifications.show("New GUID: " + utils.guid());
-        updateGUIForNewNote(null);
-        });
-    $("#" + SYNCHRONIZE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("TODO: SYNCHRONIZE");
-        });
-    $("#" + EYE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("TODO: EYE");
-        });
+	var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
+	htmlString = htmlString.replace(/subtitle/g, hooverNotesGui.activeSheet.title);
+	var sheetContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
+	$("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(sheetContainer);
+	// Register events for the sheet-related buttons.
+	$("#" + NEWHOOVERNOTE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("newHooverNoteButton y su madre");
+		jetpack.notifications.show("New GUID: " + utils.guid());
+		updateGUIForNewNote(null);
+	});
+	$("#" + SYNCHRONIZE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("TODO: SYNCHRONIZE");
+	});
+	$("#" + EYE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("TODO: EYE");
+	});
 }
 
 /**
@@ -383,29 +493,29 @@ function updateGUIFromActiveSheet() {
  * @returns
  */
 function registerMinMaxRemEvents(sheetId, pageId, noteId){
-    // Register events for page buttons
-    var buttonStr = utils.replaceIds(sheetId, pageId, noteId, MINIMIZE_BUTTON_);
-    $("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("TODO: MINIMIZEPAGE");
-//        jetpack.notifications.show("Minimizing: " + $(this).html());
-        jetpack.notifications.show("Minimizing: " + buttonStr);
-//        $(this).slideToggle("slow");
-          hooverNotesView.minimize(buttonStr);
-        });
-    var buttonStr = utils.replaceIds(sheetId, pageId, noteId, MAXIMIZE_BUTTON_);
-    $("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("TODO: MAXIMIZEPAGE");
-        jetpack.notifications.show("Maximizing: " + buttonStr);
-//        $(this).slideToggle("slow");
-        //TODO SEARCH EXACT DIV TO TOGGLE
-        hooverNotesView.maximize(buttonStr);
-        });
-    var buttonStr = utils.replaceIds(sheetId, pageId, noteId, REMOVE_BUTTON_);
-    $("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
-        console.log("TODO: REMOVEPAGE");
-        jetpack.notifications.show("Removing: " + buttonStr);
-        //TODO SEARCH EXACT DIV TO REMOVE AFTER CONFIRMING
-        });
+	// Register events for page buttons
+	var buttonStr = utils.replaceIds(sheetId, pageId, noteId, MINIMIZE_BUTTON_);
+	$("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("TODO: MINIMIZEPAGE");
+//		jetpack.notifications.show("Minimizing: " + $(this).html());
+		jetpack.notifications.show("Minimizing: " + buttonStr);
+//		$(this).slideToggle("slow");
+		hooverNotesView.minimize(buttonStr);
+	});
+	var buttonStr = utils.replaceIds(sheetId, pageId, noteId, MAXIMIZE_BUTTON_);
+	$("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("TODO: MAXIMIZEPAGE");
+		jetpack.notifications.show("Maximizing: " + buttonStr);
+//		$(this).slideToggle("slow");
+		//TODO SEARCH EXACT DIV TO TOGGLE
+		hooverNotesView.maximize(buttonStr);
+	});
+	var buttonStr = utils.replaceIds(sheetId, pageId, noteId, REMOVE_BUTTON_);
+	$("#" + buttonStr, hooverNotesGui.slideBar.contentDocument).click(function(){
+		console.log("TODO: REMOVEPAGE");
+		jetpack.notifications.show("Removing: " + buttonStr);
+		//TODO SEARCH EXACT DIV TO REMOVE AFTER CONFIRMING
+	});
 }
 
 /**
@@ -413,24 +523,24 @@ function registerMinMaxRemEvents(sheetId, pageId, noteId){
  * @returns
  */
 function ensurePageForFocusedTab (){
-    var url = jetpack.tabs.focused.contentWindow.location.href;
-    var urlTitle = jetpack.tabs.focused.contentWindow.document.title;
-    // Get the HooverPage object for this URL.
-    var hooverPageForUrl = hooverNotesGui.activeSheet.getHooverPageForUrl(url, urlTitle);
-    if (!hooverPageForUrl){
-        hooverNotesGui.activeSheet.addHooverPageForUrl(url, urlTitle);
-        // Paint container for page.
-        var htmlString = PAGE_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
-        htmlString = htmlString.replace(/pageguid/g, hooverNotesGui.activePage.pageGuid);
-        htmlString = htmlString.replace(/pagetitle/g, hooverNotesGui.activePage.pageTitle);
-        htmlString = htmlString.replace(/pageurl/g, hooverNotesGui.activePage.pageUrl);
-        var pageContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
-        $("#" + SHEET_CONTAINER_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).append(pageContainer);
-        registerMinMaxRemEvents(true, true, false);
-    } else {
-        // Focus on container for page.
-        //TODO
-    }
+	var url = jetpack.tabs.focused.contentWindow.location.href;
+	var urlTitle = jetpack.tabs.focused.contentWindow.document.title;
+	// Get the HooverPage object for this URL.
+	var hooverPageForUrl = hooverNotesGui.activeSheet.getHooverPageForUrl(url, urlTitle);
+	if (!hooverPageForUrl){
+		hooverNotesGui.activeSheet.addHooverPageForUrl(url, urlTitle);
+		// Paint container for page.
+		var htmlString = PAGE_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
+		htmlString = htmlString.replace(/pageguid/g, hooverNotesGui.activePage.pageGuid);
+		htmlString = htmlString.replace(/pagetitle/g, hooverNotesGui.activePage.pageTitle);
+		htmlString = htmlString.replace(/pageurl/g, hooverNotesGui.activePage.pageUrl);
+		var pageContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
+		$("#" + SHEET_CONTAINER_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).append(pageContainer);
+		registerMinMaxRemEvents(true, true, false);
+	} else {
+		// Focus on container for page.
+		//TODO
+	}
 }
 
 /**
@@ -438,15 +548,15 @@ function ensurePageForFocusedTab (){
  * @returns
  */
 function ensureNoteBlip (originalHtml, isHighlighted, color, annotation){
-    console.log("ensureNoteBlip: " + originalHtml);
-    hooverNotesGui.activePage.addHooverNoteForPage(hooverNotesGui.user, originalHtml, isHighlighted, color, annotation);
-    var htmlString = utils.replaceIds(true, true, true, NOTE_HTML);
-    var pageNoteContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
-    var idStr = utils.replaceIds(true, true, true, PAGENOTE_CONTAINER_);
-    $("#" + idStr, hooverNotesGui.slideBar.contentDocument).append(pageNoteContainer);
-   
-    // Register common events.
-    registerMinMaxRemEvents(true, true, true);
+	console.log("ensureNoteBlip: " + originalHtml);
+	hooverNotesGui.activePage.addHooverNoteForPage(hooverNotesGui.user, originalHtml, isHighlighted, color, annotation);
+	var htmlString = utils.replaceIds(true, true, true, NOTE_HTML);
+	var pageNoteContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
+	var idStr = utils.replaceIds(true, true, true, PAGENOTE_CONTAINER_);
+	$("#" + idStr, hooverNotesGui.slideBar.contentDocument).append(pageNoteContainer);
+
+	// Register common events.
+	registerMinMaxRemEvents(true, true, true);
 }
 
 /**
@@ -454,31 +564,31 @@ function ensureNoteBlip (originalHtml, isHighlighted, color, annotation){
  * @returns
  */
 function injectAndRegisterNote(){
-    console.log("injectAndRegisterNote: " + hooverNotesGui.activeNote);
-    // 3) Inject type-specific content into note blip.
-   
-    // Look for noteContent_container.
-    var noteContentContainerId = utils.replaceIds(true, true, true, NOTECONTENT_CONTAINER_);
-   
-    var htmlString;
-    if (hooverNotesGui.activeNote.getType() == ANNOTATED_NOTE){
-        htmlString = utils.replaceIds(true, true, true, ANNOTATENOTE_HTML);
-    } else {
-        if (hooverNotesGui.activeNote.getType() == MOVED_NOTE){
-            htmlString = utils.replaceIds(true, true, true, MOVENOTE_HTML);
-        } else {
-            htmlString = utils.replaceIds(true, true, true, HIGHLIGHTNOTE_HTML);
-            // Change the tab content so that it is highlighted.
-            if (jetpack.selection.html){
-                jetpack.selection.html = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
-                hooverNotesGui.activeNote.noteOriginalHtml = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
-            }
-        }
-    }
-    htmlString = htmlString.replace(/initialvalue/g, hooverNotesGui.activeNote.noteOriginalHtml);
-    var noteBlip = $(htmlString, hooverNotesGui.slideBar.contentDocument);
-    $("#" + noteContentContainerId, hooverNotesGui.slideBar.contentDocument).append(noteBlip);
-    //TODO: REGISTER ANNOTATE HANDLER FOR CLOSING EDITOR
+	console.log("injectAndRegisterNote: " + hooverNotesGui.activeNote);
+	// 3) Inject type-specific content into note blip.
+
+	// Look for noteContent_container.
+	var noteContentContainerId = utils.replaceIds(true, true, true, NOTECONTENT_CONTAINER_);
+
+	var htmlString;
+	if (hooverNotesGui.activeNote.getType() == ANNOTATED_NOTE){
+		htmlString = utils.replaceIds(true, true, true, ANNOTATENOTE_HTML);
+	} else {
+		if (hooverNotesGui.activeNote.getType() == MOVED_NOTE){
+			htmlString = utils.replaceIds(true, true, true, MOVENOTE_HTML);
+		} else {
+			htmlString = utils.replaceIds(true, true, true, HIGHLIGHTNOTE_HTML);
+			// Change the tab content so that it is highlighted.
+			if (jetpack.selection.html){
+				jetpack.selection.html = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
+				hooverNotesGui.activeNote.noteOriginalHtml = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
+			}
+		}
+	}
+	htmlString = htmlString.replace(/initialvalue/g, hooverNotesGui.activeNote.noteOriginalHtml);
+	var noteBlip = $(htmlString, hooverNotesGui.slideBar.contentDocument);
+	$("#" + noteContentContainerId, hooverNotesGui.slideBar.contentDocument).append(noteBlip);
+	//TODO: REGISTER ANNOTATE HANDLER FOR CLOSING EDITOR
 }
 
 /**
@@ -487,73 +597,73 @@ function injectAndRegisterNote(){
  * @returns
  */
 function updateGUIForNewNote(alertMessage, originalHtml, isHighlighted, color, annotation) {
-    // Get URL and URL title from tab.
-    console.log("updateGUIForNewNote: " + alertMessage);
-    if (alertMessage){
-        jetpack.notifications.show(alertMessage);
-    }
-   
-    // 1) Ensure active page for focused tab.
-    ensurePageForFocusedTab();
-   
-    // 2) Create active note and note blip.
-    ensureNoteBlip(originalHtml, isHighlighted, color, annotation);
-   
-    injectAndRegisterNote();
-    //TODO REGISTER EVENTS FOR NEW NOTE
-    //TODO APPEND EDITOR
-    //TODO WRITE HANDLE FUNCTION
-    $("#confirmNewNoteButton", slide.contentDocument).click(
-            function(e) {
-                handleNewNoteData($(slide.contentDocument.editor).getData(
-                        "text/plain"));
-            });
-    // 4) wait for user to insert data and confirm
+	// Get URL and URL title from tab.
+	console.log("updateGUIForNewNote: " + alertMessage);
+	if (alertMessage){
+		jetpack.notifications.show(alertMessage);
+	}
+
+	// 1) Ensure active page for focused tab.
+	ensurePageForFocusedTab();
+
+	// 2) Create active note and note blip.
+	ensureNoteBlip(originalHtml, isHighlighted, color, annotation);
+
+	injectAndRegisterNote();
+	//TODO REGISTER EVENTS FOR NEW NOTE
+	//TODO APPEND EDITOR
+	//TODO WRITE HANDLE FUNCTION
+	$("#confirmNewNoteButton", slide.contentDocument).click(
+			function(e) {
+				handleNewNoteData($(slide.contentDocument.editor).getData(
+				"text/plain"));
+			});
+	// 4) wait for user to insert data and confirm
 }
 
 
 
 function handleNewNoteData(content, originalHtml) {
 
-    // extract data from the form
-    // var content = $(slide.contentDocument.editor).getData("text/plain");
-    activeSheet.note.push(newNote(content));
-    editor.close();
+	// extract data from the form
+	// var content = $(slide.contentDocument.editor).getData("text/plain");
+	activeSheet.note.push(newNote(content));
+	editor.close();
 
-    updateGUIFromSheet(activeSheet);
+	updateGUIFromSheet(activeSheet);
 }
 
-// ------------------- MOVE, HIGHLIGHT, ANNOTATE -----------------
+//------------------- MOVE, HIGHLIGHT, ANNOTATE -----------------
 function dropToSheet(event) {
-    // Analyze content and create a new highlighted note.
-    console.log("dropToSheet");
+	// Analyze content and create a new highlighted note.
+	console.log("dropToSheet");
 }
 
 function dragContent(content, highlight) {
 
-    if (highlight) {
-        handleNewNoteData(content.highlighted, content);
-    } else {
-        // move
-        /*
-         * if (mime == 'video') else if (mime == 'image') else if (mime ==
-         * 'map') else if (mime == 'text')
-         */
-        handleNewNoteData(content, content);
-    }
+	if (highlight) {
+		handleNewNoteData(content.highlighted, content);
+	} else {
+		// move
+		/*
+		 * if (mime == 'video') else if (mime == 'image') else if (mime ==
+		 * 'map') else if (mime == 'text')
+		 */
+		handleNewNoteData(content, content);
+	}
 
 }
 
 function dragContentAnnotation(content) {
 
-    // 1) abrir editor
-    // 2) wait user' content
-    // 3) register the eventHandler
-    $("#confirmNewNoteButton", slide.contentDocument).click(
-            function(e) {
-                handleNewNoteData($(slide.contentDocument.editor).getData(
-                        "text/plain"), content);
-            });
+	// 1) abrir editor
+	// 2) wait user' content
+	// 3) register the eventHandler
+	$("#confirmNewNoteButton", slide.contentDocument).click(
+			function(e) {
+				handleNewNoteData($(slide.contentDocument.editor).getData(
+				"text/plain"), content);
+			});
 }
 
 /**
@@ -563,134 +673,134 @@ function dragContentAnnotation(content) {
  * @returns
  */
 function moveAsNote(text, html){
-    // Create new note
-    //TODO:CONTINUE
-    if (!text && !html){
-        updateGUIForNewNote("No valid text selected!", null, false, null, null);
-    } else {
-        updateGUIForNewNote(null, html, false, null, null);
-    }
+	// Create new note
+	//TODO:CONTINUE
+	if (!text && !html){
+		updateGUIForNewNote("No valid text selected!", null, false, null, null);
+	} else {
+		updateGUIForNewNote(null, html, false, null, null);
+	}
 }
 
 function highlightAsNote(text, html){
-    // Create new note
-    //TODO:CONTINUE
-    if (!text && !html){
-        updateGUIForNewNote("No valid text selected!", null, false, null, null);
-    } else {
-        updateGUIForNewNote(null, html, true, "yellow", null);
-    }
+	// Create new note
+	//TODO:CONTINUE
+	if (!text && !html){
+		updateGUIForNewNote("No valid text selected!", null, false, null, null);
+	} else {
+		updateGUIForNewNote(null, html, true, "yellow", null);
+	}
 }
 
 function annotateAsNote(html){
-    if (!html){
-        updateGUIForNewNote("No valid text selected!", null, false, null, null);
-    } else {
-        updateGUIForNewNote(null, html, false, null, true);
-    }
+	if (!html){
+		updateGUIForNewNote("No valid text selected!", null, false, null, null);
+	} else {
+		updateGUIForNewNote(null, html, false, null, true);
+	}
 }
 
 /* */
 jetpack.menu.context.page.beforeShow = function(menu, context) {
-    // Or jetpack.menu.context.page.on("a[href]").beforeShow, etc.
-    menu.reset();
-    var subMenu = jetpack.Menu();
-    subMenu.add( {
-        label : "New note",
-        command : function(menuitem) {
-        updateGUIForNewNote(null);
-    }
-    });
-    if (jetpack.selection.html) {
-        subMenu.add(null);
-        subMenu.add( {
-            label : "Move",
-            command : function(menuitem) {
-            moveAsNote(jetpack.selection.text, jetpack.selection.html);
-        }
-        });
-        subMenu.add( {
-            label : "Highlight",
-            command : function(menuitem) {
-            highlightAsNote(jetpack.selection.text, jetpack.selection.html);
-        }
-        });
-        subMenu.add( {
-            label : "Annotate",
-            command : function(menuitem) {
-            annotateAsNote(jetpack.selection.html);
-        }
-        });
-    }
-    menu
-    .add( {
-        label : "Ho(o)verNotes",
-        icon : "http://hoovernote.marcpous.com/wp-content/uploads/2009/12/hoovernotes_logo_small.jpg",
-        menu : subMenu
-    });
+	// Or jetpack.menu.context.page.on("a[href]").beforeShow, etc.
+	menu.reset();
+	var subMenu = jetpack.Menu();
+	subMenu.add( {
+		label : "New note",
+		command : function(menuitem) {
+		updateGUIForNewNote(null);
+	}
+	});
+	if (jetpack.selection.html) {
+		subMenu.add(null);
+		subMenu.add( {
+			label : "Move",
+			command : function(menuitem) {
+			moveAsNote(jetpack.selection.text, jetpack.selection.html);
+		}
+		});
+		subMenu.add( {
+			label : "Highlight",
+			command : function(menuitem) {
+			highlightAsNote(jetpack.selection.text, jetpack.selection.html);
+		}
+		});
+		subMenu.add( {
+			label : "Annotate",
+			command : function(menuitem) {
+			annotateAsNote(jetpack.selection.html);
+		}
+		});
+	}
+	menu
+	.add( {
+		label : "Ho(o)verNotes",
+		icon : "http://hoovernote.marcpous.com/wp-content/uploads/2009/12/hoovernotes_logo_small.jpg",
+		menu : subMenu
+	});
 };
 
 /* Initializing the slide bar and registering for events */
 jetpack.slideBar
-        .append( {
-//            html : SLIDE_HTML,
-            html: <html>
-            <head>
-            </head>
-            <body>
-            <div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
-            <div id='menu_container' class='menu_container'>
-            <div id='user_container' class='user_container'>
-            <div id='user_image' class='user_image'></div>
-            </div>
-            <div id='menuContainer_buttons' class='button menuContainer_buttons'>
-            <button id='newHooverSheet_button'>NewSheet</button>
-            </div>
-            </div>
-            <div id='sheets_container' class='sheets_container'></div>
-            </div>
-            <script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>,
-            persist : true,
-            width : SLIDEBAR_WIDTH,
-            onReady : function(slide) {
-            // Make slide bar globally accessible.
-            hooverNotesGui = new HooverNotesController(slide);
-            hooverNotesView = new HooverNotesView(slide, hooverNotesGui);
-            hooverNotesGui.view = hooverNotesView;
-            hooverNotesView.controller = hooverNotesGui;
-            // Register onclick events for buttons:
-            // - new sheet
-            $("#" + NEWHOOVERSHEET_BUTTON, slide.contentDocument)
-                    .click(function() {
-                                if (hooverNotesGui.activeSheet == null) {
-                                    updateGUIForNewSheet("You have to create a sheet before you can create a note.");
-                                } else {
-                                    updateGUIForNewSheet(null);
-                                }
-                    });
+.append( {
+//	html : SLIDE_HTML,
+	html: <html>
+<head>
+</head>
+<body>
+<div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
+<div id='menu_container' class='menu_container'>
+<div id='user_container' class='user_container'>
+<div id='user_image' class='user_image'></div>
+</div>
+<div id='menuContainer_buttons' class='button menuContainer_buttons'>
+<button id='newHooverSheet_button'>NewSheet</button>
+</div>
+</div>
+<div id='sheets_container' class='sheets_container'></div>
+</div>
+<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>,
+persist : true,
+width : SLIDEBAR_WIDTH,
+onReady : function(slide) {
+	// Make slide bar globally accessible.
+	hooverNotesGui = new HooverNotesController(slide);
+	hooverNotesView = new HooverNotesView(slide, hooverNotesGui);
+	hooverNotesGui.view = hooverNotesView;
+	hooverNotesView.controller = hooverNotesGui;
+	// Register onclick events for buttons:
+	// - new sheet
+	$("#" + NEWHOOVERSHEET_BUTTON, slide.contentDocument)
+	.click(function() {
+		if (hooverNotesGui.activeSheet == null) {
+			updateGUIForNewSheet("You have to create a sheet before you can create a note.");
+		} else {
+			updateGUIForNewSheet(null);
+		}
+	});
 
-            // Initializes the data and GUI.
-            init();
-            // As menus are working, we don't need 3 different drags and drops.
-            // Instead, there will only be one - highlighting by default.
-            $(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("dragover",
-                    function(e) {
-                        e.preventDefault();
-                    }, true);
-            $(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("drop",
-                    dropToSheet(e));
+	// Initializes the data and GUI.
+	init();
+	// As menus are working, we don't need 3 different drags and drops.
+	// Instead, there will only be one - highlighting by default.
+	$(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("dragover",
+			function(e) {
+		e.preventDefault();
+	}, true);
+	$(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("drop",
+			dropToSheet(e));
 
-            // drag_and_drop: // move to the move, highlight or annotation
-            // buttons
-            // listen the drop location (move, highlight or annotation) event
-            // move: dragContent(HTMLText, false); // false --> no highlighting
-            // highlight: dragContent(HTMLText, true); // true --> highlight!
-            // (colors?) --> userSettings
-            // annotate: dragContentAnnotation(HTMLText);
-// var body = $("html", slide.contentDocument).find("body");
-// $("iframe", slide.contentDocument).append(body.html());
-        },
-        onSelect:   function(slide) {
-            slide.slide(SLIDEBAR_WIDTH, true);
-        }
-        });
+	// drag_and_drop: // move to the move, highlight or annotation
+	// buttons
+	// listen the drop location (move, highlight or annotation) event
+	// move: dragContent(HTMLText, false); // false --> no highlighting
+	// highlight: dragContent(HTMLText, true); // true --> highlight!
+	// (colors?) --> userSettings
+	// annotate: dragContentAnnotation(HTMLText);
+//	var body = $("html", slide.contentDocument).find("body");
+//	$("iframe", slide.contentDocument).append(body.html());
+},
+onSelect:   function(slide) {
+	slide.slide(SLIDEBAR_WIDTH, true);
+}
+});
