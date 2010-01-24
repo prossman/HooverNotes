@@ -6,9 +6,10 @@ jetpack.future.import("menu");
 
 // CONSTANTS
 /* Note types. */
-var HIGHLIGHTED_NOTE = "HIGHLIGHTED_NOTE";
-var MOVED_NOTE = "MOVED_NOTE";
-var ANNOTATED_NOTE = "ANNOTATED_NOTE";
+const HIGHLIGHTED_NOTE = "HIGHLIGHTED_NOTE";
+const MOVED_NOTE = "MOVED_NOTE";
+const ANNOTATED_NOTE = "ANNOTATED_NOTE";
+const SLIDEBAR_WIDTH = 800;
 
 var _ID_STRING="_sh_sheetguid_p_pageguid_n_noteguid";
 
@@ -40,7 +41,7 @@ var PAGENOTE_CONTAINER_="pageNote_container_sh_sheetguid_p_pageguid";
 var PAGETITLE="pageTitle";
 var PAGE_CONTAINER_GUID="page_container_guid";
 var SHEETCONTAINER_BUTTONS="sheetContainer_buttons";
-var SHEETS_CONTAINER="sheets_container";
+var GUI_CONTENT="sheets_container";
 var SHEETCONTENT_CONTAINER_SHEETGUID="sheetContent_container_sheetguid";
 var SHEETTITLE="sheetTitle";
 var SYNCHRONIZE_BUTTON_="synchronize_button_";
@@ -53,14 +54,30 @@ var MINIMIZE_BUTTON_="minimizePage_button_sh_sheetguid_p_pageguid";
 var MAXIMIZE_BUTTON_="maximizePage_button_sh_sheetguid_p_pageguid";
 var REMOVE_BUTTON_="removePage_button_sh_sheetguid_p_pageguid";
 var GUID_LENGTH = 36;
-/* Slide bar GUI. */
+/**
+ * HTML for the overall GUI.
+ */
 var SLIDE_HTML="<html><head><title>HooverNotes GUI</title><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/menu/assets/skins/sam/menu.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/button/assets/skins/sam/button.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/fonts/fonts-min.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/container/assets/skins/sam/container.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/editor/assets/skins/sam/editor.css' /><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/element/element-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/container/container-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/menu/menu-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/button/button-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/editor/editor-min.js'></script></head><body class='body_class'><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'></div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><button id='newHooverSheet_button'>NewSheet</button></div></div><div id='sheets_container' class='sheets_container'></div></div><script><![CDATA[alert('hijo de la gran puta');var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){alert('hijo puta');if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>";
+/**
+ * HTML showing an input and controls for creating a new Sheet.
+ */
 var NEWSHEETDEF_HTML="<div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' value='Untitled' /><button id='newSheetDef_button' >Create</button></div>";
+/**
+ * HTML to be injected when creating a new sheet, corresponding to its container.
+ */
 var SHEETCONTAINER_HTML="<div id='sheet_container_sheetguid' class='sheet_container'><div id='sheetContent_container_sheetguid' class='sheetContent_container'><div id='sheetTitle_sheetguid' class='sheetTitle'>subtitle</div><div id='sheetContainer_buttons' class='buttons sheetContainer_buttons'><button id='newHooverNote_button_sheetguid' class='button newHooverNote_button'>New Note</button><button id='synchronize_button_sheetguid' class='button synchronize_button'>Synchronize</button><button id='eye_button_sheetguid' class='button eye_button'>Toggle</button></div></div></div>";
+/**
+ * HTML to be injected when creating a new page, correspondig to its container.
+ */
 var PAGE_HTML="<div id='page_container_sh_sheetguid_p_pageguid' class='page_container'><div id='pageTitle' class='pageTitle'><a href='pageurl'>pagetitle</a><div id='pageButtons_sh_sheetguid_p_pageguid' class='pageButtons'><button id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button'>_</button><button id='maximizePage_button_sh_sheetguid_p_pageguid' class='maximizePage_button'>[]</button><button id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button'>X</button></div></div><div id='pageNote_container_sh_sheetguid_p_pageguid'></div></div>";
+/**
+ * Common HTML for all notes. The notes content receives the actual type-dependent content.
+ */
 var NOTE_HTML="<div id='pageNote_container_sh_sheetguid_p_pageguid'><div id='note_container_sh_sheetguid_p_pageguid_n_noteguid'><div id='note_buttons' class='buttons note_buttons'><button id='minimizeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button minimizeNote_button' >_</button><button id='maximizeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button maxmizeNote_button' >[]</button><button id='toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button toggleHighlightNote_button' >T</button><button id='turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button turnToAnnotateNote_button'>A</button><button id='removeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button'>X</button></div></div><div id='noteContent_container_sh_sheetguid_p_pageguid_n_noteguid' class='noteContent_container'></div></div></div>";
+
 var MOVENOTE_HTML="<div id='moveNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='moveNoteContent'>initialvalue</div>";
 var ANNOTATENOTE_HTML="<div id='annotateNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' name='editor' rows='20' cols='75'>initialvalue</textarea><button id='noteeditor_button_sh_sheetguid_p_pageguid_n_noteguid'>OK</button><script><![CDATA[(function() {var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;var myConfig = {height: '300px',width: '250px',dompath: true,focusAtStart: true};console.log('Note Editor..');var myEditor = new YAHOO.widget.Editor('noteeditor_sh_sheetguid_p_pageguid_n_noteguid', myConfig);myEditor._defaultToolbar.buttonType = 'basic';myEditor.render();})();]]></script></div>";
+
 var HIGHLIGHTNOTE_HTML="<div id='highlightNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='highlightNoteContent'>initialvalue</div>";
 
 /**
@@ -232,6 +249,10 @@ function HooverNotesView(slideBar, controller){
 
 /**/
 function HooverNotesController(slideBar){
+    /* Gives access to the view. */
+    this.view;
+    /* Gives access to the storage. */
+    this.storage;
     /* Currently logged in user. */
     this.user=null;
     /* Sheet in use. */
@@ -243,8 +264,10 @@ function HooverNotesController(slideBar){
     this.activeNote = null;
     /* Array with the user' sheets. */
     this.tabSheets=null;
-    /* Array and storage of the user' sheets and notes of each sheet. */
-    this.sheetsArray=null;
+    /* Array and storage of the user' sheets and notes of each sheet. 
+     * The topmost sheet is the one currently in display.
+     */
+    this.sheetsArray=new Array();
     /* Gives global access to the slide bar. */
     this.slideBar=slideBar;
 }
@@ -253,26 +276,6 @@ function HooverNotesController(slideBar){
 var hooverNotesGui;
 var hooverNotesView;
 var utils = new Utils();
-
-/*
- * Returns a variable representing this user (i.e., a div) that can be appended.
- */
-function userToHTML(user, contentDocument){}
-/*
- * Returns a variable representing this HooverSheet (i.e., a div) that can be
- * appended.
- */
-function sheetToHTML(sheet, contentDocument){}
-/*
- * Returns a variable representing this HooverPage (i.e., a div) that can be
- * appended.
- */
-function pageToHTML(page, contentDocument){}
-/*
- * Returns a variable representing this HooverNote (i.e., a div) that can be
- * appended.
- */
-function noteToHTML(note, contentDocument){}
 
 /*
  * ToDo: - close note/sheet - minimize note/sheet - open a new tab with the URL
@@ -324,7 +327,7 @@ function updateGUIForNewSheet(message) {
     // Create input area etc. so that the user can enter the sheet title.
     var newSheetDef = $(NEWSHEETDEF_HTML, hooverNotesGui.slideBar.contentDocument);
 
-    $("#" + SHEETS_CONTAINER, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
+    $("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
     // 3) register the eventHandler
     $("#" + NEWSHEETDEF_BUTTON, hooverNotesGui.slideBar.contentDocument).click(function(){
             handleNewSheetData();
@@ -357,7 +360,7 @@ function updateGUIFromActiveSheet() {
     var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
     htmlString = htmlString.replace(/subtitle/g, hooverNotesGui.activeSheet.title);
     var sheetContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
-    $("#" + SHEETS_CONTAINER, hooverNotesGui.slideBar.contentDocument).append(sheetContainer);
+    $("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(sheetContainer);
     // Register events for the sheet-related buttons.
     $("#" + NEWHOOVERNOTE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
         console.log("newHooverNoteButton y su madre");
@@ -648,11 +651,13 @@ jetpack.slideBar
             </div>
             <script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>,
             persist : true,
-            width : 800,
+            width : SLIDEBAR_WIDTH,
             onReady : function(slide) {
             // Make slide bar globally accessible.
             hooverNotesGui = new HooverNotesController(slide);
             hooverNotesView = new HooverNotesView(slide, hooverNotesGui);
+            hooverNotesGui.view = hooverNotesView;
+            hooverNotesView.controller = hooverNotesGui;
             // Register onclick events for buttons:
             // - new sheet
             $("#" + NEWHOOVERSHEET_BUTTON, slide.contentDocument)
@@ -686,6 +691,6 @@ jetpack.slideBar
 // $("iframe", slide.contentDocument).append(body.html());
         },
         onSelect:   function(slide) {
-            slide.slide(800, true);
+            slide.slide(SLIDEBAR_WIDTH, true);
         }
         });
