@@ -1,0 +1,327 @@
+body{
+	#border:1px solid black;
+	width:250px;
+}
+.hooverNotesSlide_container
+{
+	background-color:#FFFFFF;
+	width:250px;
+	margin:0,5px;
+}
+.menu_container
+{
+	background-color:#B5B5B5;
+	width:250px;
+	height:40px;
+	border-bottom:1px solid #6b7373;
+
+}
+.user_image
+{
+	padding:2px 0px 0px 3px;
+}
+.user_name 
+{	
+	position:relative;
+	font-weight:bold;
+	left:45px;
+	top:-35px;
+	width:150px;
+	font-family:'Lucida Grande';
+	font-size:0.7em;
+}
+.menuContainer_buttons 
+{
+	position:relative;
+	top:-46px;
+	left:200px;
+	width: 40px;
+}
+.sheets_container
+{
+	padding-top:4px;
+}
+#newSheetDef_container
+{
+	position:relative;
+	padding-left:5px;
+	padding-top:4px;
+}
+.sheet_container_green
+{
+	background-color:#66FF99;
+}
+.sheet_container_magenta
+{
+	background-color:#FF99FF;
+}
+.sheet_container_blue
+{
+	background-color:#66CCFF;
+}
+.hncontainer
+{
+	width:245px;
+}
+.page_hncontent
+{
+	height:200px;
+}
+.sheet_container, .sheet_container_yellow
+{
+	background-color:#FFEC88;
+}
+.newTag_container, .newTag_container_yellow
+{
+	background-color:#FFEC88;
+	width:240px;
+	height:40px;
+	border-top:1px solid #6B7373;
+	padding-left:5px;
+}
+.newTag_container_green
+{
+	background-color:#66FF99;
+	width:240px;
+	height:40px;
+	border-top:1px solid #6B7373;
+	padding-left:5px;
+}
+.newTag_container_magenta
+{
+	background-color:#FF99FF;
+	width:240px;
+	height:40px;
+	border-top:1px solid #6B7373;
+	padding-left:5px;
+}
+.newTag_container_blue
+{
+	background-color:#66CCFF;
+	width:240px;
+	height:40px;
+	border-top:1px solid #6B7373;
+	padding-left:5px;
+}
+.sheetContainer_buttons
+{
+	background-image:url('../IMG/fondo_bot.png');
+	background-repeat:repeat-x;
+	width:245px;
+	height:24px;
+	border-top:1px solid #CCCCCC;
+	border-bottom:1px solid #6B7373;
+	position:relative;
+}
+.sheetTitle
+{
+	height:24px;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-color:#6b7373;
+}
+.pageTitle
+{
+	height:17px;
+}
+.pageTitle_link 
+{
+	position:relative;
+	width:185px;
+	padding-left:13px;
+	top:7px;
+	font-size:0.8em;
+}
+
+.sheetContent_container
+{
+	#height:25px;
+}
+.pageNote_container
+{
+	border-bottom:1px solid #CCCCCC;
+}
+.page_hncontrols
+{
+	height:22px;
+}
+
+.noteContent_container 
+{
+	position:relative;
+	padding-left:16px;
+	top:-84px;
+}
+
+.annotateNoteContent
+{
+	background-color:#EDEDED;
+	width:227px;
+	height:80px;
+	border:1px solid #6b7373;
+}
+
+
+/* buttons */
+
+.min_max_rem_buttons
+{
+	position:relative;
+	width:30px;
+	top:-17px;
+	left:215px;
+}
+.minimizePage_button
+{
+	top: -3px;
+}
+
+.page_button
+{
+	width:30px;
+}
+.pageButtons
+{
+	position:relative;
+	width:50px;
+	top:-13px;
+	left:205px;
+}
+
+.button
+{
+	position:relative;
+	cursor: pointer;
+}
+.minimizePage_button
+{
+	position:relative;
+}
+
+.page_container
+{
+	background-color:#C0C0C0;
+	width:245px;
+}
+
+.newHooverNote_button
+{
+	position:relative;
+	padding-left: 8px;
+	padding-bottom: 4px;
+	padding-right:4px;
+}
+
+.eye_button
+{
+	position:relative;
+	padding-bottom:7px;	
+}
+.synchronize_button, .colorsheet_button
+{
+	position:relative;
+	padding-left: 4px;
+	padding-bottom: 4px;
+	padding-right:4px;
+}
+
+.pageNote_container
+{
+	height:100px;
+}
+
+.note_buttons
+{
+	position:relative;
+	padding-left:3px;
+	padding-top:3px;
+	padding-bottom:3px;
+	width:10px;
+}
+
+.minimizeNote_button, .maximizeNote_button, .toggleNote_button, .annotateNote_button, .removeNote_button
+{
+	position:relative;
+	padding-bottom:8px;
+}
+
+/* inputs */
+.textarea_note
+{
+	position:relative;
+	width:225px;
+}
+
+input[type='text']
+{
+	font-size:0.7em;
+}
+#newSheetDefTitle_input
+{
+	height:17px;
+	width:180px;
+}
+.newSheetDefTitle_input_yellow
+{
+	background-color:#FFEC88;
+	border:1px solid #FF9900;
+}
+.newSheetDefTitle_input_green
+{
+	background-color:#66FF99;
+	border:1px solid #33CC00;
+}
+.newSheetDefTitle_input_magenta
+{
+	background-color:#FF99FF;
+	border:1px solid #FF33FF;
+}
+.newSheetDefTitle_input_blue
+{
+	background-color:#66CCFF;
+	border:1px solid #3399FF;
+}
+#newTag_input, #newTag_input_yellow
+{
+	background-color:#FFEC88;
+	border:1px solid #FF9900;
+}
+#newTag_input_green
+{
+	background-color:#66FF99;
+	border:1px solid #33CC00;
+}
+#newTag_input_magenta
+{
+	background-color:#FF99FF;
+	border:1px solid #FF33FF;
+}
+#newTag_input_blue
+{
+	background-color:#66CCFF;
+	border:1px solid #3399FF;
+}
+#newHooverSheet_button {
+	cursor: pointer;
+}
+#tag
+{
+	font-family:'Lucida Grande';
+	font-size: 0.5em;
+	font-style:italic;
+}
+
+.invisible_sheet
+{
+	visibility:hidden;
+}
+
+/*
+yelow: #FFEC88          outline: #FF9900
+
+green: #66FF99          outline: #33CC00
+
+mag:  #FF99FF            outline: #FF33FF
+
+blue: #66CCFF            outline: #3399FF
+*/
