@@ -10,12 +10,17 @@ const HIGHLIGHTED_NOTE = "HIGHLIGHTED_NOTE";
 const MOVED_NOTE = "MOVED_NOTE";
 const ANNOTATED_NOTE = "ANNOTATED_NOTE";
 const SLIDEBAR_WIDTH = 800;
+const BASE_URL = "http://github.com/prossman/HooverNotes/raw/master/";
 
 var _ID_STRING="_sh_sheetguid_p_pageguid_n_noteguid";
+var HNCONTAINER_ = "hncontainer";
+var HNCONTENT_ = "hncontent";
+var HNCONTROLS_ = "hncontrols";
 
 // GUI IDS
 /* Container for current sheet. */
-var SHEET_CONTAINER_ = "sheet_container_";
+//var SHEET_CONTAINER_ = "sheet_container_";
+var SHEET_CONTAINER_ ="hncontainer_sh_";
 /* Container for the overall slide bar. */
 var SLIDE_CONTAINER = "hooverNotesSlide_container";
 /* Overall container for the slide bar. */
@@ -34,16 +39,22 @@ var MENUCONTAINER_BUTTONS="menuContainer_buttons";
 var MINIMIZENOTE_BUTTON_="minimizeNote_button_sh_sheetguid_p_pageguid_n_noteguid";
 var NEWHOOVERNOTE_BUTTON_="newHooverNote_button_";
 var NEWHOOVERSHEET_BUTTON="newHooverSheet_button";
-var NOTECONTENT_CONTAINER_="noteContent_container_sh_sheetguid_p_pageguid_n_noteguid";
+//var NOTECONTENT_CONTAINER_="noteContent_container_sh_sheetguid_p_pageguid_n_noteguid";
+var NOTECONTENT_CONTAINER_="content_sh_sheetguid_p_pageguid_n_noteguid";
 var NOTE_BUTTONS="note_buttons";
-var NOTE_CONTAINER_="note_container_sh_sheetguid_p_pageguid_n_noteguid";
-var PAGENOTE_CONTAINER_="pageNote_container_sh_sheetguid_p_pageguid";
+//var NOTE_CONTAINER_="note_container_sh_sheetguid_p_pageguid_n_noteguid";
+var NOTE_CONTAINER_="content_sh_sheetguid_p_pageguid_n_noteguid";
+//var PAGENOTE_CONTAINER_="pageNote_container_sh_sheetguid_p_pageguid";
+var PAGENOTE_CONTAINER_="hncontainer_sh_sheetguid_p_pageguid";
 var PAGETITLE="pageTitle";
-var PAGE_CONTAINER_GUID="page_container_guid";
+//var PAGE_CONTAINER_GUID="page_container_guid";
+var PAGE_CONTAINER_GUID="hncontainer_sh_sheetguid_p_pageguid";
 var SHEETCONTAINER_BUTTONS="sheetContainer_buttons";
-var GUI_CONTENT="sheets_container";
+//var GUI_CONTENT="sheets_container";
+var GUI_CONTENT ="hncontent";
 var SHEETCONTENT_CONTAINER_SHEETGUID="sheetContent_container_sheetguid";
-var SHEETTITLE="sheetTitle";
+//var SHEETTITLE="sheetTitle";
+var SHEETTITLE = "hntitle";
 var SYNCHRONIZE_BUTTON_="synchronize_button_";
 var TOGGLEHIGHLIGHTNOTE_BUTTON_="toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid";
 var TURNTOANNOTATENOTE_BUTTON="turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid";
@@ -57,28 +68,36 @@ var GUID_LENGTH = 36;
 /**
  * HTML for the overall GUI.
  */
-var SLIDE_HTML="<html><head><title>HooverNotes GUI</title><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/menu/assets/skins/sam/menu.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/button/assets/skins/sam/button.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/fonts/fonts-min.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/container/assets/skins/sam/container.css' /><link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.8.0r4/build/editor/assets/skins/sam/editor.css' /><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/element/element-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/container/container-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/menu/menu-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/button/button-min.js'></script><script type='text/javascript' src='http://yui.yahooapis.com/2.8.0r4/build/editor/editor-min.js'></script></head><body class='body_class'><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'></div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><button id='newHooverSheet_button'>NewSheet</button></div></div><div id='sheets_container' class='sheets_container'></div></div><script><![CDATA[alert('hijo de la gran puta');var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){alert('hijo puta');if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>";
+var SLIDE_HTML="<html><head><title>HooverNotes SlideBar</title><link href='http://hoovernotes.org/CSS/hoover.css' rel='stylesheet' type='text/css' /></head><body><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div><div id='user_name' class='user_name'>YOUR NAME</div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><div><img src='http://hoovernotes.org/IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div></div></div><div id='hncontent' class='container sheets_container'></div></div></body></html>";
+
+var FIREBUG_HTML = "<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script>";
+/**
+ * 
+ */
+var TAG_HTML="<div id='newTag_container' class='newTag_container'><input type='text' id='newTag_input' value='tag3' /><button id='newTag_button'>C</button><br /><span id='tag'>tag1</span>, <span id='tag'>tag2</span></div>";
+
 /**
  * HTML showing an input and controls for creating a new Sheet.
  */
-var NEWSHEETDEF_HTML="<div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' value='Untitled' /><button id='newSheetDef_button' >Create</button></div>";
+var NEWSHEETDEF_HTML="<div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input_yellow' value='Untitled' /><button id='newSheetDef_button'>Create</button><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='http://hoovernotes.org/IMG/minim_yelow.png' id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='http://hoovernotes.org/IMG/close_yelow.png' id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button' alt='Remove Sheet' title='Remove Sheet' /></div></div>";
 /**
  * HTML to be injected when creating a new sheet, corresponding to its container.
  */
-var SHEETCONTAINER_HTML="<div id='sheet_container_sheetguid' class='sheet_container'><div id='sheetContent_container_sheetguid' class='sheetContent_container'><div id='sheetTitle_sheetguid' class='sheetTitle'>subtitle</div><div id='sheetContainer_buttons' class='buttons sheetContainer_buttons'><button id='newHooverNote_button_sheetguid' class='button newHooverNote_button'>New Note</button><button id='synchronize_button_sheetguid' class='button synchronize_button'>Synchronize</button><button id='eye_button_sheetguid' class='button eye_button'>Toggle</button></div></div></div>";
+var SHEETCONTAINER_HTML_OLD="<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'><div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'></div><div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'><img src='http://hoovernotes.org/IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /></div></div></div>";
+var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'><div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'><div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input_yellow' value='Untitled' /><button id='newSheetDef_button'>Create</button><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='http://hoovernotes.org/IMG/minim_yelow.png' id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='http://hoovernotes.org/IMG/close_yelow.png' id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button' alt='Remove Sheet' title='Remove Sheet' /></div></div></div><div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'><img src='http://hoovernotes.org/IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /></div></div></div>";
 /**
  * HTML to be injected when creating a new page, correspondig to its container.
  */
-var PAGE_HTML="<div id='page_container_sh_sheetguid_p_pageguid' class='page_container'><div id='pageTitle' class='pageTitle'><a href='pageurl'>pagetitle</a><div id='pageButtons_sh_sheetguid_p_pageguid' class='pageButtons'><button id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button'>_</button><button id='maximizePage_button_sh_sheetguid_p_pageguid' class='maximizePage_button'>[]</button><button id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button'>X</button></div></div><div id='pageNote_container_sh_sheetguid_p_pageguid'></div></div>";
+var PAGE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid' class='hncontainer page_hncontainer page_container'><div id='hncontrols_sh_sheetguid_p_pageguid' class='page_hncontrols hncontrols'><div id='hntitle_sh_sheetguid_p_pageguid' class='page_hntitle pageTitle'><a href='pageurl' target='_blank' class='pageTitle_link' alt='Open page in new tab'>pagetitlefocusedtab</a></div><div id='hnbuttons_sh_sheetguid_p_pageguid' class='page_hnbuttons buttons pageButtons'><img src='http://hoovernotes.org/IMG/link_black.png' id='linkHnButton_sh_sheetguid_p_pageguid' class='button openURLatTab_button' alt='Open the URL in a new tab' title='Open the URL in a new tab' /><img src='http://hoovernotes.org/IMG/minim_black.png' id='minimizeHnButton_sh_sheetguid_p_pageguid' class='button minimizePage_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' /><img src='http://hoovernotes.org/IMG/close_black.png' id='removeHnButton_sh_sheetguid_p_pageguid' class='button removePage_button' alt='Remove the page s annotations' title='Remove the page s annotations' /></div></div><div id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent hncontent'></div></div>";
 /**
  * Common HTML for all notes. The notes content receives the actual type-dependent content.
  */
-var NOTE_HTML="<div id='pageNote_container_sh_sheetguid_p_pageguid'><div id='note_container_sh_sheetguid_p_pageguid_n_noteguid'><div id='note_buttons' class='buttons note_buttons'><button id='minimizeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button minimizeNote_button' >_</button><button id='maximizeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button maxmizeNote_button' >[]</button><button id='toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button toggleHighlightNote_button' >T</button><button id='turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button turnToAnnotateNote_button'>A</button><button id='removeNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button'>X</button></div></div><div id='noteContent_container_sh_sheetguid_p_pageguid_n_noteguid' class='noteContent_container'></div></div></div>";
+var NOTE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid' class='hncontainer note_hncontainer'><div id='hncontrols_sh_sheetguid_p_pageguid_n_noteguid'><div id='hntitle_sh_sheetguid_p_pageguid_n_noteguid' class='note_hntitle'></div><div id='hnbuttons_sh_sheetguid_p_pageguid_n_noteguid' class='hnbuttons note_hnbuttons buttons note_buttons'><img src='http://hoovernotes.org/IMG/lapiz.png' id='toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button toggleNote_button' alt='Toggle annotations' title='Toogle annotation' /><img src='http://hoovernotes.org/IMG/marcador.png' id='turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid' class='button annotateNote_button' alt='Edit annotation' title='Edit annotation' /><img src='http://hoovernotes.org/IMG/minim_black.png' id='minimizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button minimizeNote_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' /><img src='http://hoovernotes.org/IMG/expand_black.png' id='maximizeHnButton_button_sh_sheetguid_p_pageguid_n_noteguid' class='button maximizeNote_button' alt='Expand the page s annotations' title='Expand the page s annotations' /><img src='http://hoovernotes.org/IMG/close_black.png' id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button' alt='Remove the page s annotations' title='Remove the page s annotations' /></div></div><div id='content_sh_sheetguid_p_pageguid_n_noteguid' class='hncontainer note_hncontainer noteContent_container'></div></div>";
 
-var MOVENOTE_HTML="<div id='moveNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='moveNoteContent'>initialvalue</div>";
-var ANNOTATENOTE_HTML="<div id='annotateNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' name='editor' rows='20' cols='75'>initialvalue</textarea><button id='noteeditor_button_sh_sheetguid_p_pageguid_n_noteguid'>OK</button><script><![CDATA[(function() {var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;var myConfig = {height: '300px',width: '250px',dompath: true,focusAtStart: true};console.log('Note Editor..');var myEditor = new YAHOO.widget.Editor('noteeditor_sh_sheetguid_p_pageguid_n_noteguid', myConfig);myEditor._defaultToolbar.buttonType = 'basic';myEditor.render();})();]]></script></div>";
+var MOVENOTE_HTML="<div id='content_sh_sheetguid_p_pageguid_n_noteguid'class='moveNoteContent'>initialvalue</div>";
+var ANNOTATENOTE_HTML="<div id='annotateNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /><button id='noteeditor_button_sh_sheetguid_p_pageguid_n_noteguid'>OK</button></div>";
 
-var HIGHLIGHTNOTE_HTML="<div id='highlightNoteContent_sh_sheetguid_p_pageguid_n_noteguid' class='highlightNoteContent'>initialvalue</div>";
+var HIGHLIGHTNOTE_HTML="<div id='highlightNoteContent_sh_sheetguid_p_pageguid_n_noteguid'class='highlightNoteContent'>initialvalue</div>";
 
 /**
  * Encapsulates different utilities.
@@ -125,6 +144,21 @@ function Utils(){
 	    //TODO
 	};
 }
+
+var Libs = new function (){
+	this.loadLib = function (document, libUrl){
+		console.log("Loading " + libUrl);
+		jetpack.notifications.show("Loading " + libUrl);
+		var script = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
+		script.src = libUrl;
+		$(script).bind("load", function() {
+			console.log(libUrl + " injected");
+		});
+		document.getElementsByTagName("head")[0].appendChild(script);
+		console.log("Loaded " + libUrl);
+		jetpack.notifications.show("Loaded " + libUrl);
+	};
+}();
 
 // DATATYPES
 /**
@@ -249,27 +283,30 @@ function HooverNotesView(slideBar, controller){
 
 /**/
 function HooverNotesController(slideBar){
+	var me = this;
     /* Gives access to the view. */
-    this.view;
+    me.view;
     /* Gives access to the storage. */
-    this.storage;
+    me.storage;
     /* Currently logged in user. */
-    this.user=null;
+    me.user=null;
     /* Sheet in use. */
-    this.activeSheet=null;
-    // /this.oldActiveSheet=null;
+    me.activeSheet=null;
+    // /me.oldActiveSheet=null;
     /* Page in use. */
-    this.activePage = null;
+    me.activePage = null;
     /* Note in use. */
-    this.activeNote = null;
+    me.activeNote = null;
     /* Array with the user' sheets. */
-    this.tabSheets=null;
+    me.tabSheets=null;
     /* Array and storage of the user' sheets and notes of each sheet. 
      * The topmost sheet is the one currently in display.
      */
-    this.sheetsArray=new Array();
+    me.sheetsArray=new Array();
     /* Gives global access to the slide bar. */
-    this.slideBar=slideBar;
+    me.slideBar=slideBar;
+    
+    me.addNewSheet = function (){};
 }
 
 // GLOBAL VARIABLES
@@ -325,9 +362,15 @@ function updateGUIForNewSheet(message) {
     // repository
     // 2) show sheet definition GUI
     // Create input area etc. so that the user can enter the sheet title.
-    var newSheetDef = $(NEWSHEETDEF_HTML, hooverNotesGui.slideBar.contentDocument);
 
-    $("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
+//ERROR: FALTA AÑADIR EL DIV SHEETCONTAINER_HTML
+//SOLUCION: JUNTAR LOS DIVS EN 1 ÚNICO DIV (O FRAGMENTO HTML) --> solucionado con SHEETCONTAINER_HTML con NEWSHEETDEF_HTML integrado!
+
+//ERROR: FALTA el FONDO AMARILLO
+//SOLUCION: bajar el background-color de nivel... o ponerlo asociado al id según el color seleccionado por el usuario --> NO SOLUCIONADO
+	var newSheetDef = $(NEWSHEETDEF_HTML, hooverNotesGui.slideBar.contentDocument);
+	$("#" + GUI_CONTENT, hooverNotesGui.slideBar.contentDocument).append(newSheetDef);
+
     // 3) register the eventHandler
     $("#" + NEWSHEETDEF_BUTTON, hooverNotesGui.slideBar.contentDocument).click(function(){
             handleNewSheetData();
@@ -339,8 +382,8 @@ function updateGUIForNewSheet(message) {
 function handleNewSheetData() {
     // console.log("handleNewSheet getting title");
     // extract data from the form
-    var title = $("#" + NEWSHEETDEFTITLE_INPUT, hooverNotesGui.slideBar.contentDocument).val();
-    console.log("handleNewSheet title:" + title);
+	var title = $("#" + NEWSHEETDEFTITLE_INPUT, hooverNotesGui.slideBar.contentDocument).val();
+	console.log("handleNewSheet title:" + title);
     if (!title){
         title="untitled";
     }
@@ -357,6 +400,7 @@ function getSheets(user) {
 
 /* Takes the active sheet and updates the GUI accordingly. */
 function updateGUIFromActiveSheet() {
+	jetpack.notifications.show("newHooverNoteButton y su madre");
     var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
     htmlString = htmlString.replace(/subtitle/g, hooverNotesGui.activeSheet.title);
     var sheetContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
@@ -369,9 +413,11 @@ function updateGUIFromActiveSheet() {
         });
     $("#" + SYNCHRONIZE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
         console.log("TODO: SYNCHRONIZE");
+		jetpack.notifications.show("TODO:SYNCHRONIZE");
         });
     $("#" + EYE_BUTTON_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).click(function(){
         console.log("TODO: EYE");
+		jetpack.notifications.show("TODO:eye");
         });
 }
 
@@ -422,7 +468,10 @@ function ensurePageForFocusedTab (){
         // Paint container for page.
         var htmlString = PAGE_HTML.replace(/sheetguid/g, hooverNotesGui.activeSheet.guid);
         htmlString = htmlString.replace(/pageguid/g, hooverNotesGui.activePage.pageGuid);
-        htmlString = htmlString.replace(/pagetitle/g, hooverNotesGui.activePage.pageTitle);
+        //htmlString = htmlString.replace(/pagetitle/g, hooverNotesGui.activePage.pageTitle);
+		var pagetitlefocusedtab = hooverNotesGui.activePage.pageTitle.substr(0, 50);
+		//if (hooverNotesGui.activepage.PageTitle.length > 50) pagetitlefocusedtab = pagetitlefocusedtab+"...";
+		htmlString = htmlString.replace(/pagetitlefocusedtab/g, pagetitlefocusedtab);
         htmlString = htmlString.replace(/pageurl/g, hooverNotesGui.activePage.pageUrl);
         var pageContainer = $(htmlString, hooverNotesGui.slideBar.contentDocument);
         $("#" + SHEET_CONTAINER_ + hooverNotesGui.activeSheet.guid, hooverNotesGui.slideBar.contentDocument).append(pageContainer);
@@ -455,19 +504,25 @@ function ensureNoteBlip (originalHtml, isHighlighted, color, annotation){
  */
 function injectAndRegisterNote(){
     console.log("injectAndRegisterNote: " + hooverNotesGui.activeNote);
+	jetpack.notifications.show("injectAndRegisterNote: " + hooverNotesGui.activeNote);
     // 3) Inject type-specific content into note blip.
    
     // Look for noteContent_container.
     var noteContentContainerId = utils.replaceIds(true, true, true, NOTECONTENT_CONTAINER_);
-   
+
+   jetpack.notifications.show(hooverNotesGui.activeNote.getType());
+
     var htmlString;
     if (hooverNotesGui.activeNote.getType() == ANNOTATED_NOTE){
+		jetpack.notifications.show("ANNOTATE");
         htmlString = utils.replaceIds(true, true, true, ANNOTATENOTE_HTML);
     } else {
         if (hooverNotesGui.activeNote.getType() == MOVED_NOTE){
+			jetpack.notifications.show("MOOOOVE");
             htmlString = utils.replaceIds(true, true, true, MOVENOTE_HTML);
         } else {
-            htmlString = utils.replaceIds(true, true, true, HIGHLIGHTNOTE_HTML);
+            jetpack.notifications.show("HIGHLIGHT");
+			htmlString = utils.replaceIds(true, true, true, HIGHLIGHTNOTE_HTML);
             // Change the tab content so that it is highlighted.
             if (jetpack.selection.html){
                 jetpack.selection.html = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
@@ -489,6 +544,7 @@ function injectAndRegisterNote(){
 function updateGUIForNewNote(alertMessage, originalHtml, isHighlighted, color, annotation) {
     // Get URL and URL title from tab.
     console.log("updateGUIForNewNote: " + alertMessage);
+    jetpack.notifications.show("updateGUIForNewNote: " + alertMessage);
     if (alertMessage){
         jetpack.notifications.show(alertMessage);
     }
@@ -505,8 +561,7 @@ function updateGUIForNewNote(alertMessage, originalHtml, isHighlighted, color, a
     //TODO WRITE HANDLE FUNCTION
     $("#confirmNewNoteButton", slide.contentDocument).click(
             function(e) {
-                handleNewNoteData($(slide.contentDocument.editor).getData(
-                        "text/plain"));
+                handleNewNoteData($(slide.contentDocument.editor).getData("text/plain"));
             });
     // 4) wait for user to insert data and confirm
 }
@@ -526,7 +581,7 @@ function handleNewNoteData(content, originalHtml) {
 // ------------------- MOVE, HIGHLIGHT, ANNOTATE -----------------
 function dropToSheet(event) {
     // Analyze content and create a new highlighted note.
-    console.log("dropToSheet");
+    jetpack.notifications.show("dropToSheet");
 }
 
 function dragContent(content, highlight) {
@@ -632,65 +687,46 @@ jetpack.menu.context.page.beforeShow = function(menu, context) {
 
 /* Initializing the slide bar and registering for events */
 jetpack.slideBar
-        .append( {
-//            html : SLIDE_HTML,
-            html: <html>
-            <head>
-            </head>
-            <body>
-            <div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
-            <div id='menu_container' class='menu_container'>
-            <div id='user_container' class='user_container'>
-            <div id='user_image' class='user_image'></div>
-            </div>
-            <div id='menuContainer_buttons' class='button menuContainer_buttons'>
-            <button id='newHooverSheet_button'>NewSheet</button>
-            </div>
-            </div>
-            <div id='sheets_container' class='sheets_container'></div>
-            </div>
-            <script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></body></html>,
-            persist : true,
-            width : SLIDEBAR_WIDTH,
-            onReady : function(slide) {
-            // Make slide bar globally accessible.
-            hooverNotesGui = new HooverNotesController(slide);
-            hooverNotesView = new HooverNotesView(slide, hooverNotesGui);
-            hooverNotesGui.view = hooverNotesView;
-            hooverNotesView.controller = hooverNotesGui;
-            // Register onclick events for buttons:
-            // - new sheet
-            $("#" + NEWHOOVERSHEET_BUTTON, slide.contentDocument)
-                    .click(function() {
-                                if (hooverNotesGui.activeSheet == null) {
-                                    updateGUIForNewSheet("You have to create a sheet before you can create a note.");
-                                } else {
-                                    updateGUIForNewSheet(null);
-                                }
-                    });
-
-            // Initializes the data and GUI.
-            init();
-            // As menus are working, we don't need 3 different drags and drops.
-            // Instead, there will only be one - highlighting by default.
-            $(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("dragover",
-                    function(e) {
-                        e.preventDefault();
-                    }, true);
-            $(slide.contentDocument, "#" + SHEET_CONTAINER).addEventListener("drop",
-                    dropToSheet(e));
-
-            // drag_and_drop: // move to the move, highlight or annotation
-            // buttons
-            // listen the drop location (move, highlight or annotation) event
-            // move: dragContent(HTMLText, false); // false --> no highlighting
-            // highlight: dragContent(HTMLText, true); // true --> highlight!
-            // (colors?) --> userSettings
-            // annotate: dragContentAnnotation(HTMLText);
-// var body = $("html", slide.contentDocument).find("body");
-// $("iframe", slide.contentDocument).append(body.html());
-        },
-        onSelect:   function(slide) {
-            slide.slide(SLIDEBAR_WIDTH, true);
-        }
-        });
+.append( {
+//	html : SLIDE_HTML,
+	html : <html><head><title>HooverNotes SlideBar</title><link href='http://hoovernotes.org/CSS/hoover.css' rel='stylesheet' type='text/css' /></head><body><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div><div id='user_name' class='user_name'>YOUR NAME</div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><div><img src='http://hoovernotes.org/IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div></div></div><div id='hncontent' class='container sheets_container'></div></div></body><script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script></html>,
+	persist : true,
+	width : SLIDEBAR_WIDTH,
+	onReady : function(slide) {
+		// Make slide bar globally accessible.
+		hooverNotesGui = new HooverNotesController(slide);
+		hooverNotesView = new HooverNotesView(slide, hooverNotesGui);
+		hooverNotesGui.view = hooverNotesView;
+		hooverNotesView.controller = hooverNotesGui;
+		// Register onclick events for buttons:
+		// - new sheet
+		$("#" + NEWHOOVERSHEET_BUTTON, slide.contentDocument)
+		.click(function() {
+			if (hooverNotesGui.activeSheet == null) {
+				updateGUIForNewSheet("You have to create a sheet before you can create a note.");
+			} else {
+				updateGUIForNewSheet(null);
+			}
+		});
+		Libs.loadLib(slide.contentDocument, "http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.js");
+		Libs.loadLib(slide.contentDocument, BASE_URL + "/lib/jquery.livequery.js");
+		// Initializes the data and GUI.
+		init();
+		// As menus are working, we don't need 3 different drags and drops.
+		// Instead, there will only be one - highlighting by default.
+		// $(slide.contentDocument, "#" + HNCONTENT_)
+		slide.contentDocument.getElementById(HNCONTENT_).addEventListener("dragover",
+				function(e) {
+			e.preventDefault();
+		}, true);
+		
+//		$(slide.contentDocument, "#" + HNCONTENT_).addEventListener("drop",
+		slide.contentDocument.getElementById(HNCONTENT_).addEventListener("drop",
+				function(e) {
+			dropToSheet(e);
+		}, true);
+	},
+	onSelect:   function(slide) {
+		slide.slide(SLIDEBAR_WIDTH, true);
+	}
+});
