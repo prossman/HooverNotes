@@ -86,7 +86,8 @@ var NEWSHEETDEF_HTML="<div id='newSheetDef_container'><input type='text' id='new
  * container.
  */
 var SHEETCONTAINER_HTML_OLD="<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'><div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'></div><div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'><img src='http://hoovernotes.org/IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /></div></div></div>";
-var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'><div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'><div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input_yellow' value='Untitled' /><button id='newSheetDef_button'>Create</button><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='http://hoovernotes.org/IMG/minim_yelow.png' id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='http://hoovernotes.org/IMG/close_yelow.png' id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button' alt='Remove Sheet' title='Remove Sheet' /></div></div></div><div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'><img src='http://hoovernotes.org/IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /></div></div></div>";
+var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='hncontrols_sh_sheetguid' class='hncontrols sheet_hncontrols sheetContent_container'><div id='hntitle_sh_sheetguid' class='hntitle sheet_hntitle sheetTitle'><div id='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input_yellow' value='subtitle' /><button id='newSheetDef_button'>Create</button><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='http://hoovernotes.org/IMG/minim_yelow.png' id='minimizePage_button_sh_sheetguid_p_pageguid' class='minimizePage_button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='http://hoovernotes.org/IMG/close_yelow.png' id='removePage_button_sh_sheetguid_p_pageguid' class='removePage_button' alt='Remove Sheet' title='Remove Sheet' /></div></div></div><div id='hnbuttons_sh_sheetguid' class='hnbuttons sheet_hnbuttons buttons sheetContainer_buttons'><img src='http://hoovernotes.org/IMG/new_note.png' alt='New Note' id='newHooverNote_button_sheetguid' class='button newHooverNote_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/eye.png' alt='Toggle' id='eye_button_sheetguid' class='button eye_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/syncro.png' alt='Synchronize' id='synchronize_button_sheetguid' class='button synchronize_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/color2.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /><img src='http://hoovernotes.org/IMG/separador_bot.png' /><img src='http://hoovernotes.org/IMG/help.png' alt='Color' id='colorsheet_button_sheetguid' class='button colorsheet_button' /></div></div></div>";
+
 /**
  * HTML to be injected when creating a new page, correspondig to its container.
  */
@@ -321,7 +322,30 @@ function HooverNotesView(slideBar){
 		if (!sheet){
 			updateGUIForNewSheet(null);
 		} else {
-			jetpack.notifications.show("Should be initialized from sheets");
+			jetpack.notifications.show("view.showSheet: " + sheet.title);
+			
+			console.log("view.showSheet: " + sheet.title);
+			
+			var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, sheet.guid);
+			htmlString = htmlString.replace(/subtitle/g, sheet.title);
+			appendElemToId(htmlString, GUI_CONTENT);
+//			var sheetContainer = $(htmlString, hnView.slideBar.contentDocument);
+//			$("#" + GUI_CONTENT, hnView.slideBar.contentDocument).append(sheetContainer);
+			// Register events for the sheet-related buttons.
+			//TODO move to init and out of container
+			$("#" + NEWHOOVERNOTE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
+				console.log("newHooverNoteButton y su madre");
+				jetpack.notifications.show("New GUID: " + Utils.guid());
+				updateGUIForNewNote(null);
+			});
+			$("#" + SYNCHRONIZE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
+				console.log("TODO: SYNCHRONIZE");
+				jetpack.notifications.show("TODO:SYNCHRONIZE");
+			});
+			$("#" + EYE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
+				console.log("TODO: EYE");
+				jetpack.notifications.show("TODO:eye");
+			});
 		}
 	};
 
@@ -351,12 +375,13 @@ function HooverNotesView(slideBar){
 			title="untitled";
 		}
 		//hnCtrl.getActiveSheet() = new HooverSheet(title, hnCtrl.user, "en", true, true);
-		hnCtrl.addNewSheet(title, "en", true, true);
+		hide(NEWSHEETDEF_CONTAINER);
+		me.control.addNewSheet(title, "en", true, true);
 		// sheetsArray.push(newSheet(title));
 //		me.remove(NEWSHEETDEF_CONTAINER, false);
-		hide(NEWSHEETDEF_CONTAINER);
+		
 //		$("#" + NEWSHEETDEF_CONTAINER, hnView.slideBar.contentDocument).remove();
-		updateGUIFromActiveSheet();
+//		updateGUIFromActiveSheet();
 	}
 
 	/**
@@ -479,13 +504,16 @@ function HooverNotesController(){
 	 * To be called when adding a new sheet.
 	 */
 	me.addNewSheet = function(title, language, shared, editable){
+		console.log("ctrl.addNewSheet: " + title);
 		// view.updateGUIForNewSheet(null);
 		var sheet = new HooverSheet(title, me.user, language, shared, editable);
 		me.activeSheet = sheet;
 		if (!me.sheetsArray) {
 			me.sheetsArray = new Array();
-			me.sheetsArray.push(sheet);
-		}
+//			me.sheetsArray.push(sheet);
+		} 
+		me.sheetsArray.splice(0, 0, sheet);
+		
 		// Sync.
 		me.storage.syncSheet(sheet);
 		me.view.showSheet(sheet);
@@ -496,9 +524,11 @@ function HooverNotesController(){
 	};
 
 	me.getActiveSheet = function (){
-		if (me.sheetsArray){
+		if (me.sheetsArray && me.sheetsArray.length > 0){
+			console.log("active sheet: " + me.sheetsArray[0].title);
 			return me.sheetsArray[0];
 		}
+		console.log("ctrl.sheetsArray = null or length = 0");
 		return null;
 	};
 }
@@ -544,30 +574,6 @@ var hnView;
  * ....
  * 
  */
-
-//------------- SHEETS --------------
-/* Takes the active sheet and updates the GUI accordingly. */
-function updateGUIFromActiveSheet() {
-	jetpack.notifications.show("newHooverNoteButton y su madre");
-	var htmlString = SHEETCONTAINER_HTML.replace(/sheetguid/g, hnCtrl.getActiveSheet().guid);
-	htmlString = htmlString.replace(/subtitle/g, hnCtrl.getActiveSheet().title);
-	var sheetContainer = $(htmlString, hnView.slideBar.contentDocument);
-	$("#" + GUI_CONTENT, hnView.slideBar.contentDocument).append(sheetContainer);
-	// Register events for the sheet-related buttons.
-	$("#" + NEWHOOVERNOTE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
-		console.log("newHooverNoteButton y su madre");
-		jetpack.notifications.show("New GUID: " + Utils.guid());
-		updateGUIForNewNote(null);
-	});
-	$("#" + SYNCHRONIZE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
-		console.log("TODO: SYNCHRONIZE");
-		jetpack.notifications.show("TODO:SYNCHRONIZE");
-	});
-	$("#" + EYE_BUTTON_ + hnCtrl.getActiveSheet().guid, hnView.slideBar.contentDocument).click(function(){
-		console.log("TODO: EYE");
-		jetpack.notifications.show("TODO:eye");
-	});
-}
 
 /**
  * Registers events for minimizing, maximizing and removing a blip.
@@ -857,7 +863,7 @@ jetpack.slideBar
 		hnCtrl = new HooverNotesController();
 		hnView = new HooverNotesView(slide);
 		hnCtrl.view = hnView;
-		hnView.controller = hnCtrl;
+		hnView.control = hnCtrl;
 
 //		Libs.loadLib(slide.contentDocument, BASE_URL + "/lib/jquery.js");
 //		Libs.loadLib(slide.contentDocument, BASE_URL + "/lib/jquery.livequery.js");
