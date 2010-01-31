@@ -48,9 +48,11 @@ var MINIMIZE_BUTTON_ = "minimizeHnButton";
 var MAXIMIZE_BUTTON_ = "maximizeHnButton";
 /** ID prefix for button for removing.*/
 var REMOVE_BUTTON_ = "removeHnButton";
+/** ID prefix for text area for editing notes. */
+var NOTEEDITOR_ = "noteeditor";
 
 /** Maximum number of characters to appear in the page title. */
-var CHARPAGETITLE_MAX = 50;
+var CHARPAGETITLE_MAX = 42;
 /** Relative URL for logo for annotation notes. */
 var ANNOTATE_LOGO = "img/write_mini.png";
 /** Relative URL for logo for move notes. */
@@ -118,11 +120,11 @@ var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid'class='hncontainer sh
 var PAGE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid' class='hncontainer page_hncontainer page_container'><div id='hncontrols_sh_sheetguid_p_pageguid' class='page_hncontrols hncontrols'><div id='hntitle_sh_sheetguid_p_pageguid' class='page_hntitle pageTitle'><a href='pageurl' target='_blank' class='pageTitle_link' alt='Open page in new tab'>subtitle</a></div><div id='hnbuttons_sh_sheetguid_p_pageguid' class='page_hnbuttons buttons min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid_p_pageguid' class='button minimizePage_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid_p_pageguid' class='button openURLatTab_button' alt='Maximize the page s annotation' title='Maximize the page s annotations' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid_p_pageguid' class='button removePage_button' alt='Remove the page s annotations' title='Remove the page s annotations' /></div></div><div id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent hncontent'></div></div>";
 /** Common HTML for all notes. The notes content receives the actual 
  * type-dependent content. */
-var NOTE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid'><div id='note_controls' class='note_controls'><table class='note_buttons'><tr class='note_controls_column'><td class='note_controls_type'><img src='note_logo' id='note_controls_type'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td id='note_controls_edit'><img src='img/edit.png' id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button editNote_button' alt='Edit the annotation' title='Edit the annotation' /></td></tr><tr class='note_controls_column'><td id='note_controls_link'><img src='img/link.png' id='linkHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button linkNotePage_button' alt='Visualize the annotations into the URL context' title='Visualize the annotations into the URL context' /></td></tr><tr class='note_controls_column'><td id='note_controls_remove'><img src='img/eliminar.png' id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button' alt='Remove the annotation' title='Remove the annotation' /></td></tr></table></div><div id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'></div></div>";
+var NOTE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid'><div id='note_controls' class='note_controls'><table class='note_buttons'><tr class='note_controls_column'><td class='note_controls_type'><img src='note_logo' id='note_controls_type'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td id='note_controls_edit'><img src='img/edit.png' id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button editNote_button' alt='Edit the annotation' title='Edit the annotation' /></td></tr><tr class='note_controls_column'><td id='note_controls_link'><img src='img/link.png' id='linkHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button linkNotePage_button' alt='Visualize the annotations into the URL context' title='Visualize the annotations into the URL context' /></td></tr><tr class='note_controls_column'><td id='note_controls_remove'><img src='img/eliminar.png' id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button' alt='Remove the annotation' title='Remove the annotation' /></td></tr></table></div><div id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'></div><div id='page_down'><img src='img/sombra_new_sheet.png'/></div></div>";
 /** HTML for the actual content of a moved note. */
 var MOVENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
 var HIGHLIGHTNOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
-var ANNOTATENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /><button id='noteeditor_button_sh_sheetguid_p_pageguid_n_noteguid'>OK</button></div>";
+var ANNOTATENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /></div>";
 
 /**
  * Encapsulates different utility functions.
@@ -610,6 +612,29 @@ function HooverNotesView(slideBar){
     Utils.log(0, "view.injectAndRegisterNote: injecting " + htmlStr + " to " + idStr);
     appendElemToId(htmlStr, idStr);
     // TODO: REGISTER ANNOTATE HANDLER FOR CLOSING EDITOR
+    if (note.getType() == ANNOTATED_NOTE){
+      idStr = Utils.assembleID(sheetId, pageId, note.noteGuid, NOTEEDITOR_);
+      Utils.log(2, "view.ijectAndRegisterNote: registering annotation events for " + idStr);
+      registerEvent("dblclick", idStr, function(){
+        Utils.log(0, "Making " + this.id + " editable again.");
+        makeAnnotationEditable(this.id);
+      });
+      registerEvent("blur", idStr, function(){
+        Utils.log(0, "Saving " + this.id + " and making non-editable.");
+        saveAndDisableAnnotation (this.id);
+      });
+    }
+  }
+  
+  function makeAnnotationEditable(idStr){
+//    $("#" + idStr, me.slideBar.contentDocument).is(":visible");
+    Utils.log(2, "view.makeAnnotationEditable: " + idStr);
+    $("#" + idStr, me.slideBar.contentDocument).removeAttr("readonly");
+  }
+  
+  function saveAndDisableAnnotation (idStr){
+    Utils.log(2, "view.saveAndDisableAnnotation: " + idStr);
+    $("#" + idStr, me.slideBar.contentDocument).attr("readonly", "readonly");
   }
   
   
@@ -642,6 +667,9 @@ function HooverNotesView(slideBar){
       Utils.log(1, "view.ensurePageForFocusedTab: Creating page HTML for " + pageUrl);
       var htmlString = Utils.replaceIDsInHTMLStr(sheetId, pageId, null, PAGE_HTML);
       var shortPageTitle= pageTitle.substr(0, CHARPAGETITLE_MAX);
+      if (shortPageTitle.length < pageTitle.length){
+        shortPageTitle += "...";
+      }
 
       htmlString = htmlString.replace(TITLE_SUB, shortPageTitle);
       htmlString = htmlString.replace(PAGEURL_SUB, pageUrl);
@@ -657,7 +685,7 @@ function HooverNotesView(slideBar){
    * @returns
    */
   function ensureNoteBlip (sheetId, pageId, note){
-    Utils.log(2, "ensureNoteBlip: " + note.noteGuid + ", type " + note.getType());
+    Utils.log(0, "ensureNoteBlip: " + note.noteGuid + ", type " + note.getType());
     var htmlString = Utils.replaceIDsInHTMLStr(sheetId, pageId, note.noteGuid, NOTE_HTML);
     var imgStr = MOVE_LOGO;
     if (note.getType() == ANNOTATED_NOTE){
@@ -1225,20 +1253,20 @@ jetpack.menu.context.page.beforeShow = function(menu, context) {
     subMenu.add( {
       label : "Move",
       command : function(menuitem) {
-      moveAsNote(jetpack.selection.text, jetpack.selection.html);
-    }
+        moveAsNote(jetpack.selection.text, jetpack.selection.html);
+      }
     });
     subMenu.add( {
       label : "Highlight",
       command : function(menuitem) {
-      highlightAsNote(jetpack.selection.text, jetpack.selection.html);
-    }
+        highlightAsNote(jetpack.selection.text, jetpack.selection.html);
+      }
     });
     subMenu.add( {
       label : "Annotate",
       command : function(menuitem) {
-      annotateAsNote(jetpack.selection.text, jetpack.selection.html);
-    }
+        annotateAsNote(jetpack.selection.text, jetpack.selection.html);
+      }
     });
   }
   menu
@@ -1250,8 +1278,7 @@ jetpack.menu.context.page.beforeShow = function(menu, context) {
 };
 
 /* Initializing the slide bar and registering for events */
-jetpack.slideBar
-.append( {
+jetpack.slideBar.append( {
 //  html : SLIDE_HTML,
   html : <html>
     <head>
