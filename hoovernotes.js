@@ -1,3 +1,17 @@
+/*
+ * HooverNotes Jetpack  
+ *
+ * Developed by Marc Pous and Philipp Rossmanith 
+ * for the Mozilla Jetpack for Learning Design Challenge 
+ * http://design-challenge.mozillalabs.com/jetpack-for-learning/
+ * 
+ * For more information about our concept and future development, please visit:
+ * http://blog.hoovernotes.org
+ *
+ * License: Mozilla Public License 1.1 (MPL 1.1) 
+ * See http://www.opensource.org/licenses/mozilla1.1.php
+ */
+
 //IMPORTS
 with (jetpack.future) {
   import("slideBar");
@@ -15,11 +29,12 @@ var ANNOTATED_NOTE = "ANNOTATED_NOTE";
 
 // PROGRAM CONTROL
 var SLIDEBAR_WIDTH = 800;
-var BASE_URL = "http://github.com/prossman/HooverNotes/raw/master/";
+var IMGBASE_URL = "http://hoovernotes.org/HN/img/";
+var PAGEANNOTATION_ORIGINALHTML = "<!--Write your page annotation here-->";
 
 // IDs.
 var _ID_STRING="_sh_sheetguid_p_pageguid_n_noteguid";
-/** Used for varructing IDs. */
+/** Used for constructing IDs. */
 var SHEETGUID_PRE = "_sh_";
 var PAGEGUID_PRE = "_p_"; 
 var NOTEGUID_PRE = "_n_";
@@ -37,9 +52,14 @@ var PAGEURL_SUB = "pageurl";
 /** Pattern used for matching a note's initial value. */
 var NOTEINITIALVALUE_SUB = /initialvalue/g;
 
-/** Container ID. A container corresponds to a level in the hierarchy.*/
-var HNCONTAINER_ = "hncontainer"
+/** Container ID. A container corresponds to a level in the hierarchy, such as
+ * a HooverSheet, HooverPage or HooverNote.*/
+var HNCONTAINER_ = "hncontainer";
+/** Content ID. Content is embedded within a container and encapsulates the 
+ * actual content.*/
 var HNCONTENT_ = "hncontent";
+/** The menus and buttons for a container should be contained within the 
+ * corresponding controls .*/
 var HNCONTROLS_ = "hncontrols";
 
 /** ID prefix for button for minimizing.*/
@@ -48,11 +68,15 @@ var MINIMIZE_BUTTON_ = "minimizeHnButton";
 var MAXIMIZE_BUTTON_ = "maximizeHnButton";
 /** ID prefix for button for removing.*/
 var REMOVE_BUTTON_ = "removeHnButton";
+/** ID prefix for button for maximizing.*/
+var EDIT_BUTTON_ = "editHnButton";
 /** ID prefix for text area for editing notes. */
-var NOTEEDITOR_ = "noteeditor";
+var EDITOR_ = "editor";
 
 /** Maximum number of characters to appear in the page title. */
 var CHARPAGETITLE_MAX = 42;
+/** Length of the GUIDs in use. */
+var GUID_LENGTH = 36;
 /** Relative URL for logo for annotation notes. */
 var ANNOTATE_LOGO = "img/write_mini.png";
 /** Relative URL for logo for move notes. */
@@ -72,50 +96,48 @@ var GUI_CONTENT ="hncontent";
 //var SHEETTITLE="sheetTitle";
 var SHEETTITLE = "hntitle";
 
-/**
- * Button ID for synchronizing data. 
- */
+/** Button ID for synchronizing data. */
 var SYNCHRONIZE_BUTTON_="synchronizeHnButton";
-/**
- * Button ID for turning on/off HooverNotes visibility in main tab.
- */
-var EYE_BUTTON_="toggleviewHnButton";
-/**
- * Button ID for creating a new HooverNote.
- */
-var NEWHOOVERNOTE_BUTTON_="newhoovernoteHnButton";
-/**
- * Button ID for choosing sheet color.
- */
-var COLORSHEET_BUTTON = "colorsheetHnButton";
-/**
- * Button ID for getting help.
- */
-var HELP_BUTTON = "helpHnButton";
-/**
- *  Button ID for new new HooverSheet. 
- */
+/** Button ID for creating a new annotated HooverNote. */
+var ANNOTATE_BUTTON="newhoovernoteHnButton";
+/** Button ID for creating a new moved HooverNote. */
+var MOVE_BUTTON = "dragHnButton";
+/** Button ID for creating a new moved HooverNote. */
+var HIGHLIGHT_BUTTON = "markerHnButton";
+/** Button ID for creating a new moved HooverNote. */
+var TAG_BUTTON = "tagHnButton";
+/** Button ID for new new HooverSheet. */
 var NEWHOOVERSHEET_BUTTON="newhooversheetHnButton";
-
-var TOGGLEHIGHLIGHTNOTE_BUTTON_="toggleHighlightNote_button_sh_sheetguid_p_pageguid_n_noteguid";
-var TURNTOANNOTATENOTE_BUTTON="turnToAnnotateNote_button_sh_sheetguid_p_pageguid_n_noteguid";
+/** Button ID for confirming the title of a new HooverSheet. */
 var NEWSHEETDEF_BUTTON="newSheetDef_button";
-var NEWSHEETDEFTITLE_INPUT="newSheetDefTitle_input";
-var NEWSHEETDEF_CONTAINER="newSheetDef_container";
-var GUID_LENGTH = 36;
+
+/** Button ID for turning on/off HooverNotes visibility in main tab. */
+var EYE_BUTTON_="toggleviewHnButton";
+/** Button ID for choosing sheet color. Currently unsupported. */
+var COLORSHEET_BUTTON = "colorsheetHnButton";
+/** Button ID for getting help. Currently unsupported. */
+var HELP_BUTTON = "helpHnButton";
+
+/** Input for defining sheet titles. */
+var NEWSHEETDEFTITLE_INPUT = "newSheetDefTitle_input";
+/** Name of the container for  new sheet definition. */
+var NEWSHEETDEF_CONTAINER = "newSheetDef_container";
+
+
 
 // HTML
 // Used for injecting HTML by substituting its placeholders.
 /** HTML for the overall GUI. */
 var SLIDE_HTML="<html><head><title>HooverNotes SlideBar</title><link href='http://hoovernotes.org/CSS/hoover.css' rel='stylesheet' type='text/css' /></head><body><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div><div id='user_name' class='user_name'>YOUR NAME</div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><div><img src='http://hoovernotes.org/IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div></div></div><div id='hncontent' class='container sheets_container'></div></div></body></html>";
 var FIREBUG_HTML = "<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script>";
-
 /** HTML for tags container */
 var TAG_HTML="<div id='newTag_container' class='newTag_container'><input type='text' id='newTag_input' value='tag3' /><button id='newTag_button'>C</button><br /><span id='tag'>tag1</span>, <span id='tag'>tag2</span></div>";
 /** HTML showing an input and controls for creating a new Sheet. */
-var NEWSHEETDEF_HTML="<div id='newSheetDef_container' class='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' value='Untitled' /><div id='newSheetDef_controls' class='newSheetDef_controls'><img src='img/confirmar_but.png' id='newSheetDef_button' title='Create the Sheet' alt='Create the Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeSheetButton' alt='Remove the Sheet' title='Remove the Sheet' /></div><div id='newSheet_down'><img src='img/sombra_new sheet.png' /></div></div>";
+var NEWSHEETDEF_HTML="<div id='newSheetDef_container' class='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' value='Untitled' /><div id='newSheetDef_controls' class='newSheetDef_controls'><img src='img/confirmar_but.png' id='newSheetDef_button' title='Create the Sheet' alt='Create the Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeSheetButton' alt='Remove the Sheet' title='Remove the Sheet' /></div><div id='newSheet_down'><img src='img/sombra_new_sheet.png' /></div></div>";
 /** HTML for creating a new sheet container. */
-var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid'class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'>Untitled</div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid' class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid' class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button' alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent' ></div></div>";
+var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid'class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'>subtitle</div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid' class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid' class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button' alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent' ></div></div>";
+// With text area:
+// <div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'><textarea id='editor_sh_sheetguid' class='editor_sheet' name='editor' readonly='readonly'>subtitle</textarea></div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><imgsrc='img/minimize.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet'title='Minimize Sheet' /><img style='display: none'src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet'title='Expand Sheet' /><img src='img/borrar.png'id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent'></div></div>
 /** HTML for creating a new page container. */
 var PAGE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid' class='hncontainer page_hncontainer page_container'><div id='hncontrols_sh_sheetguid_p_pageguid' class='page_hncontrols hncontrols'><div id='hntitle_sh_sheetguid_p_pageguid' class='page_hntitle pageTitle'><a href='pageurl' target='_blank' class='pageTitle_link' alt='Open page in new tab'>subtitle</a></div><div id='hnbuttons_sh_sheetguid_p_pageguid' class='page_hnbuttons buttons min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid_p_pageguid' class='button minimizePage_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid_p_pageguid' class='button openURLatTab_button' alt='Maximize the page s annotation' title='Maximize the page s annotations' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid_p_pageguid' class='button removePage_button' alt='Remove the page s annotations' title='Remove the page s annotations' /></div></div><div id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent hncontent'></div></div>";
 /** Common HTML for all notes. The notes content receives the actual 
@@ -124,7 +146,7 @@ var NOTE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid'><div id=
 /** HTML for the actual content of a moved note. */
 var MOVENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
 var HIGHLIGHTNOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
-var ANNOTATENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'><textarea id='noteeditor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /></div>";
+var ANNOTATENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'><textarea id='editor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /></div>";
 
 /**
  * Encapsulates different utility functions.
@@ -154,6 +176,10 @@ var Utils = new function (){
     
     if (level == 4){
       console.error(message);
+      jetpack.notifications.show(message);
+    }
+    
+    if (level == 5){
       jetpack.notifications.show(message);
     }
   };
@@ -286,7 +312,7 @@ function HooverSheet(title, user, language, shared, editable) {
   this.guid = Utils.guid();
   this.shared = shared;
   this.editable = editable;
-  var pages = null;
+  this.pages = new Array();
 
   /**
    * Returns a <code>HooverPage</code> for the given URL.
@@ -294,23 +320,19 @@ function HooverSheet(title, user, language, shared, editable) {
    * If such a <code>HooverPage</code> doesn't exist yet, it is created.
    */
   this.getHooverPageForUrl = function (url, urlTitle){
-    if (pages && (pages.length > 0)){
-      Utils.log(1, "HooverSheet.getHooverPageForUrl() with " + url 
-        + ", currently " + pages.length + " pages.");
-//      for (var p in pages){
-        for (var i = 0; i < pages.length; ++i){
-        if (pages[i]){
-          Utils.log(1, "HooverSheet.getHooverPageForUrl(): traversing " + 
-            pages[i].pageUrl + " against " + url);
-          if (pages[i].pageUrl == url){
+    if (me.pages && (me.pages.length > 0)){
+      Utils.log(2, "HooverSheet.getHooverPageForUrl() with " + url 
+        + ", currently " + me.pages.length + " me.pages.");
+//      for (var p in me.pages){
+      for (var i = 0; i < me.pages.length; ++i){
+        if (me.pages[i]){
+          if (me.pages[i].pageUrl == url){
             // TODO remove; should not be used anymore
-            hnCtrl.activePage = pages[i];
-            Utils.log(1, "HooverSheet.getHooverPageForUrl: URL found");
-            return pages[i];
+            hnCtrl.activePage = me.pages[i];
+            Utils.log(1, "HooverSheet.getHooverPageForUrl: URL " + url + " found");
+            return me.pages[i];
           }
-        } else {
-          Utils.log(1, "Goddamn fucking page == null");
-        }
+        } 
       }
     } else {
       Utils.log(1, "HooverSheet.getHooverPageForUrl() with " + url
@@ -321,23 +343,83 @@ function HooverSheet(title, user, language, shared, editable) {
   };
   
   this.addHooverPage = function (page, position){
-    Utils.log(2, "ctrl.addHoverPage: adding " + page.pageUrl + " at " + position);
-    if (!pages){
-      pages = new Array();
-      Utils.log(1, "sheet.addHooverPage: creating page array, length " + pages.length);
+    Utils.log(1, "ctrl.addHoverPage: adding " + page.pageUrl + " at " + position);
+    if (!me.pages){
+      me.pages = new Array();
+      Utils.log(1, "sheet.addHooverPage: creating page array, length " + me.pages.length);
     }
     if (position){
-      pages.splice(position, 0, page);
+      me.pages.splice(position, 0, page);
     } else {
       Utils.log(1, "sheet.addHooverPage: Pushing " + page.pageUrl);
-      pages.push(page);
+      me.pages.push(page);
     }
     return page;
+  };
+  
+  function findPageById(pageId){
+    if (me.pages && (me.pages.length > 0)){
+      for (var i = 0; i < me.pages.length; ++i){
+        if (me.pages[i]){
+          if (me.pages[i].pageGuid == pageId){
+            Utils.log(1, "HooverSheet.getHooverPageForUrl: " + pageId + " found");
+            return i;
+          }
+        }
+      }
+    } else {
+      Utils.log(1, "HooverSheet.getHooverPageForUrl() with " + pageId
+        + ", currently no me.pages.");
+    } 
+    Utils.log(1, "HooverSheet.getHooverPageForUrl(): no match found for " + pageId);
+    return -1;
+  };
+  
+  this.removePageById = function(pageId){
+    var index = findPageById(pageId);
+    if (index > -1){
+      me.pages.splice(index, 1);
+      return true;
+    }
+    Utils.log(1, "Page " + pageId + " couldn't be removed.");
+    return false;
+  };
+  
+  this.removeNoteById = function (pageId, noteId){
+    var ind = findPageById(pageId);
+    if (ind > 0){
+      return me.pages[ind].removeNoteById(noteId);
+    } else {
+      return false;
+    }
+  };
+  
+  /**
+   * Returns all notes within this sheet.
+   */
+  this.getAllNotes = function(){
+    if (me.pages && (me.pages.length > 0)){
+      var notesArray = new Array();
+      Utils.log(0, "sheet.getAllNotes: concatenating notes");
+      for (var i = 0; i < me.pages.length; ++i){
+        // Each page should at least contain one note and hence an array.
+        notesArray = notesArray.concat(me.pages[i].noteArray);
+      }
+      return notesArray;
+    } else {
+      Utils.log(0, "sheet.getAllNotes: No pages");
+      return null;
+    }
+  };
+  
+  this.getPages = function (){
+    return me.pages;
   };
 }
 
 /* HooverNote */
 function HooverNote(user, originalHtml, isHighlighted, color, annotation) {
+  var me = this;
   this.noteAuthor = user;
   this.noteCreationTime = new Date();
   this.noteLastModifiedTime = new Date();
@@ -368,6 +450,8 @@ function HooverPage(pageUrl, pageTitle, pageHtml){
   this.pageUrl = pageUrl;
   this.pageGuid = Utils.guid();
   this.noteArray;
+  
+  this.pageUrls = new Array();
 
   /**
    * Adds a note for this page at given position.
@@ -391,18 +475,48 @@ function HooverPage(pageUrl, pageTitle, pageHtml){
     if (!me.noteArray || (me.noteArray.length == 0)){
       return null;
     } else {
-      for (var note in me.noteArray){
-        if (note.noteGuid == noteID){
-          return note;
+      var ind;
+      for (ind in me.noteArray){
+        if (me.noteArray[ind].noteGuid == noteID){
+          return me.noteArray[ind];
         }
       } 
       return null;
     }
   }
+  
+  function findNoteById (noteId){
+    if (me.noteArray && (me.noteArray.length > 0)){
+      for (var i = 0; i < me.noteArray.length; ++i){
+        if (me.noteArray[i]){
+          if (me.noteArray[i].pageGuid == noteId){
+            Utils.log(1, "HooverPage.findNoteById: " + noteId + " found");
+            return i;
+          }
+        }
+      }
+    } else {
+      Utils.log(1, "HooverPage.findNoteById: " + noteId
+        + ", currently no me.noteArray.");
+    } 
+    Utils.log(1, "HooverPage.findNoteById: no match found for " + noteId);
+    return -1;
+  };
+  
+  this.removeNoteById = function(noteId){
+    var index = findNoteById(noteId);
+    if (index > -1){
+      me.noteArray.splice(index, 1);
+      return true;
+    }
+    Utils.log(1, "Note " + noteId + " couldn't be removed.");
+    return false;
+  };
 }
 
 /* User */
 function User (userName, credential, imgURL){
+  var me = this;
   this.userName = userName;
   this.credential = credential;
   this.imgURL = imgURL;
@@ -414,9 +528,11 @@ function HooverNotesView(slideBar){
   me.slideBar = slideBar;
   me.control = null;
   var definingSheet = false;
+  var selectedText = null;
+  var selectedHtml = null;
 
   this.minimize = function (idString){
-    Utils.log(2, "View.minimize() " + idString);
+    Utils.log(1, "View.minimize() " + idString);
 
     // for the moment: pageNote_container
     var idSubStr = Utils.extractId(idString, null);
@@ -435,7 +551,7 @@ function HooverNotesView(slideBar){
   };
 
   this.maximize = function (idString){
-    Utils.log(2, "View.maximize() " + idString);
+    Utils.log(1, "View.maximize() " + idString);
 
     // for the moment: pageNote_container
     var idSubStr = Utils.extractId(idString, null);
@@ -466,7 +582,7 @@ function HooverNotesView(slideBar){
     var noteId = Utils.extractId(idString, NOTEGUID_PRE);
     
     me.control.remove(sheetId, pageId, noteId);
-    Utils.log(2, "View.remove() " + containerId);
+    Utils.log(1, "View.remove() " + containerId);
     $("#" + containerId, me.slideBar.contentDocument).empty();
     
   };
@@ -508,7 +624,7 @@ function HooverNotesView(slideBar){
     idStr = Utils.assembleID(sheetId, pageId, noteId, REMOVE_BUTTON_);
     debugOut += ", rem > " + idStr;
     registerEvent("click", idStr, function(){
-      Utils.log(2, "Removing " + this.id);
+      Utils.log(1, "Removing " + this.id);
       me.remove(this.id);
     });
     Utils.log(0, debugOut);
@@ -528,10 +644,57 @@ function HooverNotesView(slideBar){
     var newElem = $(contentStr, me.slideBar.contentDocument);
     $("#" + idStr, me.slideBar.contentDocument).append(newElem);
   };
+  
+  function makeAnnotationEditable(idStr){
+    var editorId;
+    if (idStr.indexOf(EDITOR_) < 0){
+      // idStr may also come from a button. Extract the ID and create a new string.
+      editorId = EDITOR_ + Utils.extractId(idStr, null);
+    } else {
+      editorId = idStr;
+    }
+    Utils.log(1, "view.makeAnnotationEditable: " + editorId);
+    $("#" + editorId, me.slideBar.contentDocument).removeAttr("readonly");
+  };
+  
+  function saveAndDisableAnnotation (idStr){
+    Utils.log(1, "view.saveAndDisableAnnotation: " + idStr);
+    $("#" + idStr, me.slideBar.contentDocument).attr("readonly", "readonly");
+  };
+  
+  this.setSelection = function(text, html){
+    selectedText = text;
+    selectedHtml = html;
+  };
+  
+  function consumeSelectedText (){
+    var text = selectedText;
+    selectedText = null;
+    return text;
+  }
+  function consumeSelectedHtml (){
+    var html = selectedHtml;
+    selectedHtml = null;
+    return html;
+  }
 
+  /**
+   * 
+   */
+  function isExisting (sheetId, pageId, noteId){
+    var containerId = Utils.assembleID(sheetId, pageId, noteId, HNCONTAINER_);
+    var pLength = $("#" + containerId, me.slideBar.contentDocument).length; 
+    if (pLength == 0){
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
   // SHOW functions
   // Show functions receive a basic data type (HooverSheet, HooverNote) and 
   // display it in the GUI.
+
   
   /**
    * Accepts a HooverSheet and updates the slide bar from it.
@@ -544,14 +707,32 @@ function HooverNotesView(slideBar){
     } else {
       Utils.log(1, "view.showSheet: " + sheet.title);
       // TODO: check for existing sheet with the same name
-
-      var htmlString = SHEETCONTAINER_HTML.replace(SHEETGUID_SUB, sheet.guid);
-      htmlString = htmlString.replace(TITLE_SUB, sheet.title);
+//      if (!isExisting(sheet.sheetGuid)){
+        var htmlString = SHEETCONTAINER_HTML.replace(SHEETGUID_SUB, sheet.guid);
+        htmlString = htmlString.replace(TITLE_SUB, sheet.title);
+        appendElemToId(htmlString, GUI_CONTENT);
+        // Register events for the sheet-related buttons.
+        //TODO move to init and out of container
+        registerMinMaxRemEvents(sheet.guid, null, null);
+//      }
       
-      appendElemToId(htmlString, GUI_CONTENT);
-      // Register events for the sheet-related buttons.
-      //TODO move to init and out of container
-      registerMinMaxRemEvents(sheet.guid, null, null);
+      Utils.log(0, "view.showSheet: getting all notes from sheet");
+      var notesArray = sheet.getAllNotes();
+      
+      if (notesArray){
+        Utils.log(0, "view.showSheet: showing " + notesArray.length + " notes.");
+        for (var i = 0; i < sheet.pages.length; ++i){
+          var page = sheet.pages[i];
+          if (page.noteArray){
+            for (var j = 0; j < page.noteArray.length; ++j){ 
+              me.showNote(sheet.guid, page.pageGuid, page.pageUrl, page.pageTitle, 
+                page.noteArray[j], false, true);
+            }
+          }
+        }
+      } else {
+        Utils.log(2, "view.showSheet: not showing any notes.");
+      }
     }
   };
   
@@ -560,7 +741,7 @@ function HooverNotesView(slideBar){
    * added for the page currently in display. 
    */
   this.showNote = function (sheetId, pageId, pageUrl, pageTitle, note, getPageHtml, isNewPage){
-    Utils.log(1, "view:showNote " + sheetId + "|" + pageId + "|" + note.noteGuid);
+    Utils.log(2, "view:showNote " + sheetId + "|" + pageId + "|" + note.noteGuid);
     
     // Look for the page container's content div. Create a blip for the note
     // and attach it as last child.
@@ -603,8 +784,8 @@ function HooverNotesView(slideBar){
         htmlStr = Utils.replaceIDsInHTMLStr(sheetId, pageId, note.noteGuid, HIGHLIGHTNOTE_HTML);
         // Change the tab content so that it is highlighted.
         if (jetpack.selection.html){
-          jetpack.selection.html = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
-          note.noteOriginalHtml = "<mark style='background:yellow'>" + jetpack.selection.html + "</mark>";
+          jetpack.selection.html = "<mark style='background:" + note.noteColor + "'>" + jetpack.selection.html + "</mark>";
+          note.noteOriginalHtml = "<mark style='background:" + note.noteColor + "'>" + jetpack.selection.html + "</mark>";
         }
       }
     }
@@ -613,34 +794,22 @@ function HooverNotesView(slideBar){
     appendElemToId(htmlStr, idStr);
     // TODO: REGISTER ANNOTATE HANDLER FOR CLOSING EDITOR
     if (note.getType() == ANNOTATED_NOTE){
-      idStr = Utils.assembleID(sheetId, pageId, note.noteGuid, NOTEEDITOR_);
-      Utils.log(2, "view.ijectAndRegisterNote: registering annotation events for " + idStr);
+      idStr = Utils.assembleID(sheetId, pageId, note.noteGuid, EDITOR_);
+      Utils.log(1, "view.ijectAndRegisterNote: registering annotation events for " + idStr);
       registerEvent("dblclick", idStr, function(){
-        Utils.log(0, "Making " + this.id + " editable again.");
         makeAnnotationEditable(this.id);
       });
       registerEvent("blur", idStr, function(){
-        Utils.log(0, "Saving " + this.id + " and making non-editable.");
         saveAndDisableAnnotation (this.id);
       });
+      idStr = Utils.assembleID(sheetId, pageId, note.noteGuid, EDIT_BUTTON_);
+      registerEvent("click", idStr, function(){
+	    makeAnnotationEditable(this.id);
+	  });
     }
   }
   
-  function makeAnnotationEditable(idStr){
-//    $("#" + idStr, me.slideBar.contentDocument).is(":visible");
-    Utils.log(2, "view.makeAnnotationEditable: " + idStr);
-    $("#" + idStr, me.slideBar.contentDocument).removeAttr("readonly");
-  }
   
-  function saveAndDisableAnnotation (idStr){
-    Utils.log(2, "view.saveAndDisableAnnotation: " + idStr);
-    $("#" + idStr, me.slideBar.contentDocument).attr("readonly", "readonly");
-  }
-  
-  
-  var toggleHooverNotesVisibility = function (){
-    Utils.log(1, "TODO: TOGGLE HOOVERNOTES VISIBILITY IN MAIN TAB");
-  };
   
   // ENSURE functions
   // Ensure functions make sure that a certain GUI element that is needed for
@@ -654,6 +823,16 @@ function HooverNotesView(slideBar){
 //    var urlTitle = Utils.getCurrentPageTitle();
     Utils.log(1, "view.ensurePageForFocusedTab: Ensuring page for " + pageUrl);
     // Get the HooverPage object for this URL.
+    var pageIsExisting = isExisting(sheetId, pageId, null);
+//    var pageContainerId = Utils.assembleID(sheetId, pageId, null, HNCONTAINER_);
+//    var pLength = $("#" + pageContainerId, me.slideBar.contentDocument).length; 
+//    if (pLength == 0){
+//      pageIsNew = true;
+//      Utils.log(2, "Page is new");
+//    } else {
+//      Utils.log(2, "Page is old");;
+//    }
+    
     var isNewPage = true;
     if (!isCheckNewPage){
       if (hnCtrl.hasPage(pageUrl, pageTitle)){
@@ -662,7 +841,7 @@ function HooverNotesView(slideBar){
         isNewPage = false;
       }  
     } 
-    if (isNewPage) {
+    if (!pageIsExisting) {
       // Paint container for page.
       Utils.log(1, "view.ensurePageForFocusedTab: Creating page HTML for " + pageUrl);
       var htmlString = Utils.replaceIDsInHTMLStr(sheetId, pageId, null, PAGE_HTML);
@@ -701,13 +880,13 @@ function HooverNotesView(slideBar){
     // Register common events.
     registerMinMaxRemEvents(sheetId, pageId, note.noteGuid);
   }
-
+  
   // UPDATE functions
   // Update functions update existing GUI elements with new data.
   /**
    * Updates user information.
    */
-  me.updateUser = function(user){
+  this.updateUser = function(user){
     Utils.log(1, "view:updateUser");
   };
   
@@ -772,12 +951,12 @@ function HooverNotesView(slideBar){
   var handleNewNoteData = function(){
     me.control.addNewNote(originalHtml, isHighlighted, color, annotation, url, urlTitle);
   }
-
+  
   // INIT functions
   /**
    * Initializes the GUI.
    */
-  me.init = function(){
+  this.init = function(){
     if (me.slideBar){
       // Register drag and drop events
       // As menus are working, we don't need 3 different drags and drops.
@@ -790,56 +969,71 @@ function HooverNotesView(slideBar){
           function(e) {
         dropToSheet(e);
       }, true);
+
+      // Register onclick events for buttons of GUI:
+      registerEvent("click", ANNOTATE_BUTTON, function(){
+        var text = consumeSelectedText();
+        var html = consumeSelectedHtml();
+        if (html && text){
+          annotateAsNote(text, html);          
+        } else {
+          annotateAsNote(PAGEANNOTATION_ORIGINALHTML, PAGEANNOTATION_ORIGINALHTML);
+        }
+      });
       
-      registerEvent("click", NEWHOOVERNOTE_BUTTON_, function(){
-        updateGUIForNewNote(null);
-        me.control.addNewNote();
+      registerEvent("click", HIGHLIGHT_BUTTON, function(){
+        var text = consumeSelectedText();
+        var html = consumeSelectedHtml();
+        if (html && text){
+          highlightAsNote(text, html);
+        }
+      });
+      
+      registerEvent("click", MOVE_BUTTON, function(){
+        var text = consumeSelectedText();
+        var html = consumeSelectedHtml();
+        if (html && text){
+          moveAsNote(text, html);
+        }
       });
       
       registerEvent("click", SYNCHRONIZE_BUTTON_, function(){
         me.control.synchronizeData();
       });
       
-      registerEvent("click", EYE_BUTTON_, function(){
-        jetpack.notifications.show("TODO:eye");
-      });
-      
       registerEvent("click", HELP_BUTTON, function(e){
-        jetpack.notifications.show("TODO: HELP");
+        Utils.log(5, "TODO: HELP");
       });
       
-      registerEvent("click", COLORSHEET_BUTTON, function(){
-        jetpack.notifications.show("TODO: COLORSHEET");
-      });
-      
-         // Register onclick events for buttons:
-      // - new sheet
       registerEvent("click", NEWHOOVERSHEET_BUTTON, function() {
         me.showSheet(null);
       });
       
       // Create elem for defining new sheets and hide it.
       appendElemToId (NEWSHEETDEF_HTML, GUI_CONTENT);
+      
       registerEvent("click", NEWSHEETDEF_BUTTON, function(){
         handleNewSheetData();
       });
       
-      // As menus are working, we don't need 3 different drags and drops.
-    // Instead, there will only be one - highlighting by default.
-    // $(slide.contentDocument, "#" + HNCONTENT_)
-    me.slideBar.contentDocument.getElementById(HNCONTENT_).addEventListener("dragover",
-        function(e) {
-      e.preventDefault();
-    }, true);
-
-//    $(slide.contentDocument, "#" + HNCONTENT_).addEventListener("drop",
-    me.slideBar.contentDocument.getElementById(HNCONTENT_).addEventListener("drop",
-        function(e) {
-      dropToSheet(e);
-    }, true);
-      
       hide(NEWSHEETDEF_CONTAINER);
       me.updateUser(hnCtrl.user);
+      
+      jetpack.statusBar.append({ 
+        html: '<div style="margin-top:-3px;"><table style="margin:0;padding:0;"><tr><td><img src="http://hoovernotes.org/img/write_mini.png" height="16" /></td><td style="font-size:0.7em;font-weight:bold;">7</td></tr></table></div>',
+        onReady: function(widget){ 
+            $(widget).click(function(){
+                jetpack.notifications.show('Open the slidebar, there are notes from this webpage on the HooverNotes!');
+                me.slideBar.notify();
+                // TODO
+                // we are not able to open directly the HooverNotes slidebar, so at the moment we notify:
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=536309
+                // we have found a bug unresolved although there is a patch:
+                // https://bug536309.bugzilla.mozilla.org/attachment.cgi?id=422625
+                // slideBar.select();
+            }); 
+        } 
+    });
     }
   };
 }
@@ -849,7 +1043,7 @@ function HooverNotesView(slideBar){
  */
 function HooverNotesController(){ 
   var me = this;
-  
+    
   /* Gives access to the view. */
   this.view;
   
@@ -871,7 +1065,7 @@ function HooverNotesController(){
    * Array and storage of the user' sheets and notes of each sheet. The
    * topmost sheet is the one currently in display.
    */
-  this.sheetsArray=null;
+  var sheetsArray=null;
 
   /**
    * Receives a username and credentials and checks these against an
@@ -902,20 +1096,20 @@ function HooverNotesController(){
       Utils.log(1, "User not authenticated");
       return;
     } else {
-      me.initAuthenticatedUser();
+      initAuthenticatedUser();
     }
   };
 
-  this.initAuthenticatedUser = function(){
+  function initAuthenticatedUser(){
     Utils.log(0, "initAuthenticatedUser");
     me.view.init();
     if (me.user && me.user.logged){
       // Get the sheets from storage.
-      me.sheetsArray = me.storage.getHooverSheets(me.user);
+      sheetsArray = me.storage.getHooverSheets(me.user);
       // Pass the sheets plus the ID of the active sheet.
-      if (me.sheetsArray && me.sheetsArray.length > 0){
+      if (sheetsArray && sheetsArray.length > 0){
         me.activeSheet = me.getActiveSheet();
-        for (var i = 1; i < me.sheetsArray.length; i++){
+        for (var i = 1; i < sheetsArray.length; i++){
           me.view.showSheet(sheet); // 4a) initializes
         }
         me.view.showSheet(me.getActiveSheet());
@@ -932,31 +1126,35 @@ function HooverNotesController(){
    * Removes the corresponding sheet, page, and note.
    */
   this.remove = function (sheetId, pageId, noteId){
-    Utils.log(2, "ctrl.remove: " + sheetId + "|" + pageId + "|" + noteId);
+    Utils.log(1, "ctrl.remove: " + sheetId + "|" + pageId + "|" + noteId);
     
     // Find the sheet.
-    var i = findSheetById(sheetId);
+    var ind = findSheetById(sheetId);
     
-    if (i < 0) {
-      Utils.log(2, "ctrl.remove: Trying to remove non-existent sheet " + sheetId);
-      return -1;
+    if (ind < 0) {
+      Utils.log(1, "ctrl.remove: Trying to remove non-existent sheet " + sheetId);
+      return false;
     }
     
     if (sheetId && pageId && noteId){
-      // If all three IDs are provided, remove the note.  
+      // If all three IDs are provided, remove the note.
+      return sheetsArray[ind].removeNoteById(pageId, noteId);
     } else {
       if (sheetId && pageId){
-        // If only the sheet and the page ID are provided, remove the page.  
+        // If only the sheet and the page ID are provided, remove the page.
+        return sheetsArray[ind].removePageById(pageId);  
       } else {
         // If only the sheet ID is provided, remove the sheet.
+        sheetsArray.splice(ind, 1);
+        return true;
       }
     }
   }
   
   function findSheetById (sheetId){
     var i;
-    for (i in me.sheetsArray){
-      if (me.sheetsArray[i].guid == sheetId){
+    for (i in sheetsArray){
+      if (sheetsArray[i].guid == sheetId){
         return i;
       }
     }
@@ -969,10 +1167,10 @@ function HooverNotesController(){
   this.addNewSheet = function(title, language, shared, editable){
     Utils.log(1, "ctrl.addNewSheet: " + title);
     // view.updateGUIForNewSheet(null);
-    if (!me.sheetsArray) {
-      me.sheetsArray = new Array();
+    if (!sheetsArray) {
+      sheetsArray = new Array();
     } else {
-      for (var sh in me.sheetsArray){
+      for (var sh in sheetsArray){
         // If there is a sheet with the same title, return false for error.
         if (sh.title == title){
           return false;
@@ -983,7 +1181,7 @@ function HooverNotesController(){
     me.activeSheet = sheet;
     
     // Update active sheet.
-    me.sheetsArray.splice(0, 0, sheet);
+    sheetsArray.splice(0, 0, sheet);
     
     // Sync.
     me.storage.syncSheet(sheet);
@@ -995,7 +1193,7 @@ function HooverNotesController(){
    */
   this.hasPage = function (url, urlTitle){
     // Can only go into active sheet.
-    Utils.log(2, "ctrl.hasPage: " + url);
+    Utils.log(1, "ctrl.hasPage: " + url);
     var sheet = me.getActiveSheet();
     var page = sheet.getHooverPageForUrl(url, urlTitle);
     if (page){
@@ -1008,7 +1206,7 @@ function HooverNotesController(){
   } 
   
   this.addNewNote = function(originalHtml, isHighlighted, color, annotation, url, urlTitle, noteType){
-    if (me.sheetsArray && me.sheetsArray.length > 0){
+    if (sheetsArray && sheetsArray.length > 0){
       // TODO SECURITY
       Utils.log(1, "ctrl.addNewNote: " + url);
 
@@ -1053,47 +1251,104 @@ function HooverNotesController(){
   };
 
   this.getActiveSheet = function (){
-    if (me.sheetsArray && me.sheetsArray.length > 0){
-      return me.sheetsArray[0];
+    if (sheetsArray && sheetsArray.length > 0){
+      return sheetsArray[0];
     }
     Utils.log(4, "ctrl.sheetsArray = null or length = 0");
     return null;
   };
   
   this.synchronizeData = function(){
-    me.storage.syncAll(me.sheetsArray);
+    me.storage.syncAll(sheetsArray);
   };
 }
 
+// TODO REMOVE!!!
+var storageJSON = "WTF";
+
 function HooverNotesStorage(){
   var me = this;
+  var myStorage = jetpack.storage.simple;
+
   /**
    * Obtains the sheets for this user from storage.
    */
-  me.getHooverSheets = function(user){
-    Utils.log(1, "getHooverSheets");
+  this.getHooverSheets = function(user){
+//    var jsonSheets = myStorage.jsonSheets;
+    var jsonStr = myStorage.jsonSheetStrs;
+    storageJSON = jsonStr;
+    var rawSheets = JSON.parse(jsonStr);
+    var realSheets = new Array();
+    var debugStr = "storage.getHooverSheets: ";
+    // Copy data from raw sheets to real sheet, page and note objects.
+    for (var i = 0; i < rawSheets.length; ++i){
+      var reSheet = new HooverSheet();
+      for (var prop in rawSheets[i]){
+        if (prop != "pages"){
+          reSheet[prop] = rawSheets[i][prop];
+        } else {
+          var rawPages = rawSheets[i]["pages"];
+          if (rawPages){
+            debugStr += "copying pages, ";
+            var rePages = new Array();
+            for (var j = 0; j < rawPages.length; ++j){
+              var rePage = new HooverPage();
+              for (var pageProp in rawPages[j]){
+                if (pageProp != "noteArray"){
+                  rePage[pageProp] = rawPages[j][pageProp];
+                } else {
+                  var rawNotes = rawPages[j]["noteArray"];
+                  if (rawNotes){
+                    debugStr += "and notes";
+                    var reNotes = new Array();
+                    for (var k = 0; k < rawNotes.length; ++k){
+                      var reNote = new HooverNote();
+                      for (var noteProp in rawNotes[k]){
+                        reNote[noteProp] = rawNotes[k][noteProp];
+                      }
+                      reNotes.push(reNote);                      
+                    }
+                    rePage[pageProp] = reNotes;
+                  }
+                }
+              }
+              rePages.push(rePage);
+            }
+            reSheet[prop] = rePages;
+          }
+        }
+      }
+      realSheets.push(reSheet);    
+    }
+    Utils.log(2, debugStr);
+    storageJSON += "###" + JSON.stringify(realSheets);
+    return realSheets;
   };
   /**
    * Synchronizes a sheet with the permanent storage.
    */
-  me.syncSheet = function(sheet){
+  this.syncSheet = function(sheet){
     Utils.log(1, "syncSheet: " + sheet);
   };
   /**
    * Synchronizes a page with the permanent storage.
    */
-  me.syncPage = function(sheetId, page){
+  this.syncPage = function(sheetId, page){
     Utils.log(1, "syncPage: " + sheetId + "|" + page);
   };
   /**
    * Synchronizes a note with the permanent storage.
    */
-  me.syncNote = function(sheetId, pageId, note){
+  this.syncNote = function(sheetId, pageId, note){
     Utils.log(1, "syncNote: " + sheetId + "|" + pageId + "|" + note);
   };
   
   me.syncAll = function(sheetsArray){
-    Utils.log(1, "TODO: SYNCHRONIZING ALL DATA");
+    Utils.log(0, "storage.syncAll: synching " + sheetsArray.length + " sheets");
+//    var userJSON = JSONUtils.userToJSON(hnCtrl.user);
+    var userJSON = JSON.stringify(hnCtrl.user);
+    myStorage.jsonSheetStrs = JSON.stringify(sheetsArray);
+    myStorage.sync();
   };
 }
 
@@ -1102,124 +1357,33 @@ function HooverNotesStorage(){
 var hnCtrl;
 var hnView;
 
-/*
- * ToDo: - close note/sheet - minimize note/sheet - open a new tab with the URL
- * annotated - insert tag - change the note type (move --> highlight --> move) -
- * edit note - delete note/sheet - socialize - syncronize - logout
- * 
- * ....
- * 
- */
-
-/**
- * Updates the slide bar for a new note without original text.
- * @param alertMessage
- *      Can be used to deliver a message to the user.
- * @param originalHtml
- *          The HTML code for which a HooverNote is to be made.
- * @param isHighlighted
- *          <code>true</code> if highlighting is desired.
- * @param color
- *          Color of highlighting, if any.
- * @param annotation
- *          Annotation.
- * @return
- */
-function updateGUIForNewNote(alertMessage, originalHtml, isHighlighted, color, annotation) {
-  // Get URL and URL title from tab.
-  Utils.log(1, "updateGUIForNewNote: " + alertMessage);
-  if (alertMessage){
-    jetpack.notifications.show(alertMessage);
-  }
-
-  // 1) Ensure active page for focused tab.
-  ensurePageForFocusedTab();
-
-  // 2) Create active note and note blip.
-  ensureNoteBlip(originalHtml, isHighlighted, color, annotation);
-
-  injectAndRegisterNote();
-  // TODO REGISTER EVENTS FOR NEW NOTE
-  // TODO APPEND EDITOR
-  // TODO WRITE HANDLE FUNCTION
-  $("#confirmNewNoteButton", slide.contentDocument).click(
-      function(e) {
-        handleNewNoteData($(slide.contentDocument.editor).getData("text/plain"));
-      });
-  // 4) wait for user to insert data and confirm
-}
-
-
-
-function handleNewNoteData(content, originalHtml) {
-
-  // extract data from the form
-  // var content = $(slide.contentDocument.editor).getData("text/plain");
-  activeSheet.note.push(newNote(content));
-  editor.close();
-
-  updateGUIFromSheet(activeSheet);
-}
-
 //------------------- MOVE, HIGHLIGHT, ANNOTATE -----------------
-function dropToSheet(event) {
-  // Analyze content and create a new highlighted note.
-  Utils.log(1, "dropToSheet");
-}
-
-function dragContent(content, highlight) {
-
-  if (highlight) {
-    handleNewNoteData(content.highlighted, content);
-  } else {
-    // move
-    /*
-     * if (mime == 'video') else if (mime == 'image') else if (mime ==
-     * 'map') else if (mime == 'text')
-     */
-    handleNewNoteData(content, content);
-  }
-
-}
-
-function dragContentAnnotation(content) {
-
-  // 1) abrir editor
-  // 2) wait user' content
-  // 3) register the eventHandler
-  $("#confirmNewNoteButton", slide.contentDocument).click(
-      function(e) {
-        handleNewNoteData($(slide.contentDocument.editor).getData(
-        "text/plain"), content);
-      });
-}
 
 /**
- * Accepts text and html and creates a corresponding blip.
+ * Accepts text and html and creates a moved HooverNote.
  * 
  * @param text
  * @param html
- * @returns
  */
 function moveAsNote(text, html){
-  // Create new note
-  // TODO:CONTINUE
   if (!text && !html){
-    updateGUIForNewNote("No valid text selected!", null, false, null, null);
+    Utils.log(3, "No valid text selected!");
   } else {
-//    updateGUIForNewNote(null, html, false, null, null);
-// (originalHtml, isHighlighted, color, annotation, url, urlTitle);
     var url = Utils.getCurrentPageURL();
     var urlTitle = Utils.getCurrentPageTitle();
     hnCtrl.addNewNote(html, false, null, null, url, urlTitle, MOVED_NOTE);
   }
 }
 
+/**
+ * Accepts text and html and creates a highlighted HooverNote.
+ * 
+ * @param text
+ * @param html
+ */
 function highlightAsNote(text, html){
-  // Create new note
-  // TODO:CONTINUE
   if (!text && !html){
-    updateGUIForNewNote("No valid text selected!", null, false, null, null);
+    Utils.log(3, "No valid text selected!");
   } else {
     var url = Utils.getCurrentPageURL();
     var urlTitle = Utils.getCurrentPageTitle();
@@ -1227,9 +1391,15 @@ function highlightAsNote(text, html){
   }
 }
 
+/**
+ * Accepts text and html and creates an annotated HooverNote.
+ * 
+ * @param text
+ * @param html
+ */
 function annotateAsNote(text, html){
   if (!html){
-    updateGUIForNewNote("No valid text selected!", null, false, null, null);
+    Utils.log(3, "No valid text selected!");
   } else {
     var url = Utils.getCurrentPageURL();
     var urlTitle = Utils.getCurrentPageTitle();
@@ -1237,44 +1407,76 @@ function annotateAsNote(text, html){
   }
 }
 
-/* */
+// JETPACK
+// Jetpack-related GUI setup.
+jetpack.selection.onSelection(function (){
+  // TODO ENABLE/DISABLE BUTTONS AND ICONS IN SLIDEBAR MENU
+  hnView.setSelection(jetpack.selection.text, jetpack.selection.html);
+});
+
 jetpack.menu.context.page.beforeShow = function(menu, context) {
   // Or jetpack.menu.context.page.on("a[href]").beforeShow, etc.
   menu.reset();
-  var subMenu = jetpack.Menu();
-  subMenu.add( {
-    label : "New note",
-    command : function(menuitem) {
-    updateGUIForNewNote(null);
-  }
+  menu.add(null);
+    menu.add( {
+    label : "Ho(o)verNotes..."
   });
   if (jetpack.selection.html) {
-    subMenu.add(null);
-    subMenu.add( {
-      label : "Move",
-      command : function(menuitem) {
-        moveAsNote(jetpack.selection.text, jetpack.selection.html);
-      }
-    });
-    subMenu.add( {
-      label : "Highlight",
-      command : function(menuitem) {
-        highlightAsNote(jetpack.selection.text, jetpack.selection.html);
-      }
-    });
-    subMenu.add( {
+    menu.add( {
       label : "Annotate",
+      icon : IMGBASE_URL + "write_mini.png",
       command : function(menuitem) {
         annotateAsNote(jetpack.selection.text, jetpack.selection.html);
       }
     });
+    menu.add( {
+      label : "Sheet to JSON",
+      icon : IMGBASE_URL + "write_no.png",
+      command : function(menuitem) {
+        annotateAsNote(JSON.stringify(hnCtrl.getActiveSheet()), JSON.stringify(hnCtrl.getActiveSheet()));
+      }
+    });
+    menu.add( {
+      label : "Storage JSON",
+      icon : IMGBASE_URL + "write_no.png",
+      command : function(menuitem) {
+        annotateAsNote(storageJSON, storageJSON);
+      }
+    });
+    menu.add( {
+      label : "Move",
+      icon : IMGBASE_URL + "drag_mini.png",
+      command : function(menuitem) {
+        moveAsNote(jetpack.selection.text, jetpack.selection.html);
+      }
+    });
+    menu.add( {
+      label : "Highlight",
+      icon : IMGBASE_URL + "marker_mini.png",
+      command : function(menuitem) {
+        highlightAsNote(jetpack.selection.text, jetpack.selection.html);
+      }
+    });
+  } else {
+    menu.add( {
+      label : "Annotate page",
+      icon : IMGBASE_URL + "write_mini.png",
+      command : function(menuitem) {
+        annotateAsNote(PAGEANNOTATION_ORIGINALHTML, PAGEANNOTATION_ORIGINALHTML);
+      }
+    });
+    menu.add( {
+      label : "Move",
+      icon : IMGBASE_URL + "drag_no.png",
+      disabled : true
+    });
+    menu.add( {
+      label : "Highlight",
+      icon : IMGBASE_URL + "marker_no.png",
+      disabled : true
+    });
   }
-  menu
-  .add( {
-    label : "Ho(o)verNotes",
-    icon : "http://hoovernote.marcpous.com/wp-content/uploads/2009/12/hoovernotes_logo_small.jpg",
-    menu : subMenu
-  });
+  menu.add(null);
 };
 
 /* Initializing the slide bar and registering for events */
@@ -1338,6 +1540,7 @@ jetpack.slideBar.append( {
       <![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]>
   </script>
   </html>,
+  icon: "http://hoovernotes.org/HN/img/write_up.png",
   persist : true,
   width : SLIDEBAR_WIDTH,
   onReady : function(slide) {
