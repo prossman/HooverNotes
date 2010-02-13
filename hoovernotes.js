@@ -321,7 +321,7 @@ function HooverSheet(title, user, language, shared, editable) {
    */
   this.getHooverPageForUrl = function (url, urlTitle){
     if (me.pages && (me.pages.length > 0)){
-      Utils.log(2, "HooverSheet.getHooverPageForUrl() with " + url 
+      Utils.log(1, "HooverSheet.getHooverPageForUrl() with " + url 
         + ", currently " + me.pages.length + " me.pages.");
 //      for (var p in me.pages){
       for (var i = 0; i < me.pages.length; ++i){
@@ -530,6 +530,7 @@ function HooverNotesView(slideBar){
   var definingSheet = false;
   var selectedText = null;
   var selectedHtml = null;
+  me.visibleSheet = null;
 
   this.minimize = function (idString){
     Utils.log(1, "View.minimize() " + idString);
@@ -537,7 +538,7 @@ function HooverNotesView(slideBar){
     // for the moment: pageNote_container
     var idSubStr = Utils.extractId(idString, null);
     var contentId = HNCONTENT_ + idSubStr;
-    Utils.log(0, "Minimizing container ID: " + contentId);
+    Utils.log(2, "Minimizing container ID: " + contentId);
     // Hide both content and corresponding button.
     hide(contentId);
     hide(idString);
@@ -705,22 +706,33 @@ function HooverNotesView(slideBar){
     if (!sheet){
       updateGUIForNewSheet(null);
     } else {
+      // Minimize the active sheet
+      
+      if (!me.visibleSheet){
+        me.visibleSheet = sheet;
+      }
+      if (me.visibleSheet.guid != sheet.guid){
+        me.minimize(SHEETGUID_PRE + me.visibleSheet.guid);
+        me.visibleSheet = sheet;
+      } else {
+        Utils.log(2, "view.showSheet: not minimizing active sheet");
+      }
       Utils.log(1, "view.showSheet: " + sheet.title);
       // TODO: check for existing sheet with the same name
-//      if (!isExisting(sheet.sheetGuid)){
+      if (!isExisting(sheet.sheetGuid)){
         var htmlString = SHEETCONTAINER_HTML.replace(SHEETGUID_SUB, sheet.guid);
         htmlString = htmlString.replace(TITLE_SUB, sheet.title);
         appendElemToId(htmlString, GUI_CONTENT);
         // Register events for the sheet-related buttons.
         //TODO move to init and out of container
         registerMinMaxRemEvents(sheet.guid, null, null);
-//      }
+      }
       
       Utils.log(0, "view.showSheet: getting all notes from sheet");
       var notesArray = sheet.getAllNotes();
       
       if (notesArray){
-        Utils.log(0, "view.showSheet: showing " + notesArray.length + " notes.");
+        Utils.log(1, "view.showSheet: showing " + notesArray.length + " notes.");
         for (var i = 0; i < sheet.pages.length; ++i){
           var page = sheet.pages[i];
           if (page.noteArray){
@@ -731,7 +743,7 @@ function HooverNotesView(slideBar){
           }
         }
       } else {
-        Utils.log(2, "view.showSheet: not showing any notes.");
+        Utils.log(1, "view.showSheet: not showing any notes.");
       }
     }
   };
@@ -741,7 +753,7 @@ function HooverNotesView(slideBar){
    * added for the page currently in display. 
    */
   this.showNote = function (sheetId, pageId, pageUrl, pageTitle, note, getPageHtml, isNewPage){
-    Utils.log(2, "view:showNote " + sheetId + "|" + pageId + "|" + note.noteGuid);
+    Utils.log(1, "view:showNote " + sheetId + "|" + pageId + "|" + note.noteGuid);
     
     // Look for the page container's content div. Create a blip for the note
     // and attach it as last child.
@@ -828,9 +840,9 @@ function HooverNotesView(slideBar){
 //    var pLength = $("#" + pageContainerId, me.slideBar.contentDocument).length; 
 //    if (pLength == 0){
 //      pageIsNew = true;
-//      Utils.log(2, "Page is new");
+//      Utils.log(1, "Page is new");
 //    } else {
-//      Utils.log(2, "Page is old");;
+//      Utils.log(1, "Page is old");;
 //    }
     
     var isNewPage = true;
@@ -941,8 +953,13 @@ function HooverNotesView(slideBar){
     if (!title){
       title="untitled";
     }
-    hide(NEWSHEETDEF_CONTAINER);
-    me.control.addNewSheet(title, "en", true, true);
+    
+    var successful = me.control.addNewSheet(title, "en", true, true);
+    if (!successful){
+      Utils.log(5, title + " already in use!");
+    } else {
+      hide(NEWSHEETDEF_CONTAINER);
+    }
   }
   
   /**
@@ -1108,13 +1125,15 @@ function HooverNotesController(){
       sheetsArray = me.storage.getHooverSheets(me.user);
       // Pass the sheets plus the ID of the active sheet.
       if (sheetsArray && sheetsArray.length > 0){
+        Utils.log(1, "ctrl.initAuthenticatedUser: " + sheetsArray.length + " sheets");
         me.activeSheet = me.getActiveSheet();
         for (var i = 1; i < sheetsArray.length; i++){
-          me.view.showSheet(sheet); // 4a) initializes
+          me.view.showSheet(sheetsArray[i]); // 4a) initializes
         }
         me.view.showSheet(me.getActiveSheet());
       } else {
-        me.view.showSheet(null); 
+        Utils.log(1, "ctrl.initAuthenticatedUser: not showing any sheets");
+        me.view.showSheet(null);
       }
     } else {
       Utils.log(0, "user: " + user + ", user is logged " + me.user.logged);
@@ -1172,7 +1191,7 @@ function HooverNotesController(){
     } else {
       for (var sh in sheetsArray){
         // If there is a sheet with the same title, return false for error.
-        if (sh.title == title){
+        if (sheetsArray[sh].title == title){
           return false;
         }
       }
@@ -1186,6 +1205,7 @@ function HooverNotesController(){
     // Sync.
     me.storage.syncSheet(sheet);
     me.view.showSheet(sheet);
+    return true;
   };
   
   /**
@@ -1320,7 +1340,7 @@ function HooverNotesStorage(){
       }
       realSheets.push(reSheet);    
     }
-    Utils.log(2, debugStr);
+    Utils.log(1, debugStr);
     storageJSON += "###" + JSON.stringify(realSheets);
     return realSheets;
   };
@@ -1346,7 +1366,6 @@ function HooverNotesStorage(){
   me.syncAll = function(sheetsArray){
     Utils.log(0, "storage.syncAll: synching " + sheetsArray.length + " sheets");
 //    var userJSON = JSONUtils.userToJSON(hnCtrl.user);
-    var userJSON = JSON.stringify(hnCtrl.user);
     myStorage.jsonSheetStrs = JSON.stringify(sheetsArray);
     myStorage.sync();
   };
@@ -1429,20 +1448,20 @@ jetpack.menu.context.page.beforeShow = function(menu, context) {
         annotateAsNote(jetpack.selection.text, jetpack.selection.html);
       }
     });
-    menu.add( {
-      label : "Sheet to JSON",
-      icon : IMGBASE_URL + "write_no.png",
-      command : function(menuitem) {
-        annotateAsNote(JSON.stringify(hnCtrl.getActiveSheet()), JSON.stringify(hnCtrl.getActiveSheet()));
-      }
-    });
-    menu.add( {
-      label : "Storage JSON",
-      icon : IMGBASE_URL + "write_no.png",
-      command : function(menuitem) {
-        annotateAsNote(storageJSON, storageJSON);
-      }
-    });
+//    menu.add( {
+//      label : "Sheet to JSON",
+//      icon : IMGBASE_URL + "write_no.png",
+//      command : function(menuitem) {
+//        annotateAsNote(JSON.stringify(hnCtrl.getActiveSheet()), JSON.stringify(hnCtrl.getActiveSheet()));
+//      }
+//    });
+//    menu.add( {
+//      label : "Storage JSON",
+//      icon : IMGBASE_URL + "write_no.png",
+//      command : function(menuitem) {
+//        annotateAsNote(storageJSON, storageJSON);
+//      }
+//    });
     menu.add( {
       label : "Move",
       icon : IMGBASE_URL + "drag_mini.png",
