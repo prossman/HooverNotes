@@ -292,6 +292,47 @@ var Utils = new function (){
     document.getElementsByTagName("head")[0].appendChild(script);
     Utils.log(0, "Loaded " + libUrl);
   };
+  
+  //loads a script by src
+  this.loadScript = function(src, document, callback) {
+    var script = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
+    script.src = src;
+    if (callback) $(script).bind("load", callback);
+    document.getElementsByTagName("head")[0].appendChild(script);
+  };
+    
+  //AJAX get + eval a script, unsafe
+  //should we use ADSafe for sanboxing?
+  this.importScript = function(src, callback) {
+    $.get(src, function(data, status) {
+      eval(data);
+      if (callback) callback();
+    });
+  };
+  
+  //inject <script>code</script>
+  this.injectScript = function(code, document) {
+    var script = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
+    $(script).text(code);
+    document.getElementsByTagName("head")[0].appendChild(script);
+  };
+  
+  //inject jQuery + some utility plugins
+  this.injectLibs= function(document, callback) {
+    with (Utils) {
+      loadScript(base + "script/lib/jquery-1.3.2.min.js", document, function() {
+        loadScript(base + "script/lib/jquery.scrollTo.js", document, callback);
+      });
+    }
+  };
+  
+  // amazingly (ugly) unique IDs
+  this.uuid = function() {
+    var uuidGenerator = Components.classes["@mozilla.org/uuid-generator;1"]
+                .getService(Components.interfaces.nsIUUIDGenerator);
+    var uuid = uuidGenerator.generateUUID();
+    return uuid.toString().substring(1, 37);
+  }
 }();
 
 //DATATYPES
@@ -530,7 +571,7 @@ function HooverNotesView(slideBar){
   var definingSheet = false;
   var selectedText = null;
   var selectedHtml = null;
-  me.visibleSheet = null;
+  me.visibleSheetID = null;
 
   this.minimize = function (idString){
     Utils.log(1, "View.minimize() " + idString);
@@ -692,6 +733,17 @@ function HooverNotesView(slideBar){
     }
   }
   
+  function makeSheetActive(sheetId){
+    if (me.visibleSheetID.guid != sheetId){
+      var minId = Utils.assembleID(sheetId, null, null, MINIMIZE_BUTTON_);
+      me.minimize(minId);
+      me.visibleSheetID = sheetId;
+      Utils.log(2, "view.showSheet: not minimizing active sheet");
+    } else {
+      Utils.log(2, "view.showSheet: not minimizing active sheet");
+    }
+  }
+  
   // SHOW functions
   // Show functions receive a basic data type (HooverSheet, HooverNote) and 
   // display it in the GUI.
@@ -708,15 +760,6 @@ function HooverNotesView(slideBar){
     } else {
       // Minimize the active sheet
       
-      if (!me.visibleSheet){
-        me.visibleSheet = sheet;
-      }
-      if (me.visibleSheet.guid != sheet.guid){
-        me.minimize(SHEETGUID_PRE + me.visibleSheet.guid);
-        me.visibleSheet = sheet;
-      } else {
-        Utils.log(2, "view.showSheet: not minimizing active sheet");
-      }
       Utils.log(1, "view.showSheet: " + sheet.title);
       // TODO: check for existing sheet with the same name
       if (!isExisting(sheet.sheetGuid)){
@@ -745,6 +788,12 @@ function HooverNotesView(slideBar){
       } else {
         Utils.log(1, "view.showSheet: not showing any notes.");
       }
+      
+      if (!me.visibleSheetID){
+        me.visibleSheetID = sheet.guid;
+      }
+      
+      makeSheetActive(sheet.guid);
     }
   };
   
@@ -1375,6 +1424,7 @@ function HooverNotesStorage(){
 //GLOBAL VARIABLES
 var hnCtrl;
 var hnView;
+var slideDoc = null;
 
 //------------------- MOVE, HIGHLIGHT, ANNOTATE -----------------
 
@@ -1498,86 +1548,125 @@ jetpack.menu.context.page.beforeShow = function(menu, context) {
   menu.add(null);
 };
 
-/* Initializing the slide bar and registering for events */
-jetpack.slideBar.append( {
-//  html : SLIDE_HTML,
-  html : <html>
-    <head>
-      <title>HooverNotes SlideBar</title>
-      <base href='http://hoovernotes.org/HN/' />
-      <link href='http://hoovernotes.org/HN/css/hooverStyles.css' rel='stylesheet' type='text/css' />
-    </head>
-    <body>
-      <div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
-        <div id='menu_container' class='menu_container'>
-      <div class='menu_tabs_container'>
-        <table class='menu_tabs'>
-          <tr><td class='menu_piece' id='hnMainMenu'></td><td class='menu_help' id='helpHnButton'></td></tr>
-        </table>
-      </div>
-            <div id='user_container' class='user_container'>
-        <div id='hoovernotes' class='hoovernotes'>HooverNotes<!--<img src='img/hoovernotes-title.png' title='Ho(o)verNotes!' alt='Ho(o)verNotes!' />--></div>
-              <div id='user_image' class='user_image'>
-          <div class='user_pic_frame'>
-                    <img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='47px' alt='Your picture!' title='Your picture!' />
-          </div>
-              </div>
-        <div id='user_name' class='user_name'>Your Name</div>
-            </div>
-      <div id='menuContainer_buttons' class='toolsContainer'>
-        <div id='notes_pad_container' class='menuContainer_buttons notes_pad_container'>
-          <div class='notes_pad'>
-            <img src='img/new_note.png' id='newhooversheetHnButton' class='newSheetButton button' title='Create a new Sheet' alt='Create a new Sheet' />
-            <img src='img/search_note.png' id='searchHooversheetHnButton' class='searchSheetButton button' title='Search a Sheet' alt='Search a Sheet'/>
-          </div>
-        </div>
-        <div id='hnbuttons_sh_sheetguid' class='hnbuttons'>
-          <table class='sheet_buttons'>
-            <tr>
-              <td class='font_sheet_buttons'>Write</td>
-              <td class='font_sheet_buttons'>Highlight</td>
-              <td class='font_sheet_buttons'>Drag</td>
-              <td class='font_sheet_buttons'>Syncro</td>
-              <td class='font_sheet_buttons'>Tags</td>
-            </tr>
-            <tr>
-              <td class='button_write font_sheet_buttons button' id='newhoovernoteHnButton'></td>
-              <td class='button_highlight font_sheet_buttons button' id='markerHnButton'></td>
-              <td class='button_drag font_sheet_buttons button' id='dragHnButton'></td>
-              <td class='button_syncro font_sheet_buttons button' id='synchronizeHnButton'></td>
-              <td class='button_tags font_sheet_buttons button' id='tagHnButton'></td>
-            </tr>
+var SlideBar = function(callback) {
+  this.document = null;
+  
+  /* Initializing the slide bar and registering for events */
+  jetpack.slideBar.append( {
+  //  html : SLIDE_HTML,
+    html : <html>
+      <head>
+        <title>HooverNotes SlideBar</title>
+        <base href='http://hoovernotes.org/HN/' />
+        <link href='http://hoovernotes.org/HN/css/hooverStyles.css' rel='stylesheet' type='text/css' />
+      </head>
+      <body>
+        <div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
+          <div id='menu_container' class='menu_container'>
+        <div class='menu_tabs_container'>
+          <table class='menu_tabs'>
+            <tr><td class='menu_piece' id='hnMainMenu'></td><td class='menu_help' id='helpHnButton'></td></tr>
           </table>
         </div>
-          </div> <!-- toolsContainer-->
-      <div class='menu_down'><img src='img/menu_down.png' /></div>
-    </div> <!-- menu_container-->
-        <div id='hncontent' class='container sheets_container'></div>
-      </div> <!-- hooverNotesSlide_contianer -->
-    </body>
-    <script>
-      <![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]>
-  </script>
-  </html>,
-  icon: "http://hoovernotes.org/HN/img/write_up.png",
-  persist : true,
-  width : SLIDEBAR_WIDTH,
-  onReady : function(slide) {
-    // Make slide bar globally accessible.
-    hnCtrl = new HooverNotesController();
-    hnView = new HooverNotesView(slide);
-    hnCtrl.view = hnView;
-    hnView.control = hnCtrl;
+              <div id='user_container' class='user_container'>
+          <div id='hoovernotes' class='hoovernotes'>HooverNotes<!--<img src='img/hoovernotes-title.png' title='Ho(o)verNotes!' alt='Ho(o)verNotes!' />--></div>
+                <div id='user_image' class='user_image'>
+            <div class='user_pic_frame'>
+                      <img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='47px' alt='Your picture!' title='Your picture!' />
+            </div>
+                </div>
+          <div id='user_name' class='user_name'>Your Name</div>
+              </div>
+        <div id='menuContainer_buttons' class='toolsContainer'>
+          <div id='notes_pad_container' class='menuContainer_buttons notes_pad_container'>
+            <div class='notes_pad'>
+              <img src='img/new_note.png' id='newhooversheetHnButton' class='newSheetButton button' title='Create a new Sheet' alt='Create a new Sheet' />
+              <img src='img/search_note.png' id='searchHooversheetHnButton' class='searchSheetButton button' title='Search a Sheet' alt='Search a Sheet'/>
+            </div>
+          </div>
+          <div id='hnbuttons_sh_sheetguid' class='hnbuttons'>
+            <table class='sheet_buttons'>
+              <tr>
+                <td class='font_sheet_buttons'>Write</td>
+                <td class='font_sheet_buttons'>Highlight</td>
+                <td class='font_sheet_buttons'>Drag</td>
+                <td class='font_sheet_buttons'>Syncro</td>
+                <td class='font_sheet_buttons'>Tags</td>
+              </tr>
+              <tr>
+                <td class='button_write font_sheet_buttons button' id='newhoovernoteHnButton'></td>
+                <td class='button_highlight font_sheet_buttons button' id='markerHnButton'></td>
+                <td class='button_drag font_sheet_buttons button' id='dragHnButton'></td>
+                <td class='button_syncro font_sheet_buttons button' id='synchronizeHnButton'></td>
+                <td class='button_tags font_sheet_buttons button' id='tagHnButton'></td>
+              </tr>
+            </table>
+          </div>
+            </div> <!-- toolsContainer-->
+        <div class='menu_down'><img src='img/menu_down.png' /></div>
+      </div> <!-- menu_container-->
+          <div id='hncontent' class='container sheets_container'></div>
+        </div> <!-- hooverNotesSlide_contianer -->
+      </body>
+      <script>
+        <![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]>
+    </script>
+    </html>,
+    icon: "http://hoovernotes.org/HN/img/write_up.png",
+    persist : true,
+    width : SLIDEBAR_WIDTH,
+    onReady : function(slide) {
+      // Make slide bar globally accessible.
+      hnCtrl = new HooverNotesController();
+      hnView = new HooverNotesView(slide);
+      hnCtrl.view = hnView;
+      hnView.control = hnCtrl;
+  
+      // Initializes the data and GUI.
+      hnCtrl.init();
+      
+      document = slide.contentDocument;
+      slideDoc = document;
+      
+      try{
+        //TODO: simplify
+        loadLibs(document, function() {
+          Utils.loadScript("http://github.com/prossman/HooverNotes/raw/master/lib/hooverlive.js", document, function() {
+            callback();
+          });
+        });
+      } catch(e) {}
+      
+//      callback();
+    },
+    onSelect:   function(slide) {
+      slide.slide(SLIDEBAR_WIDTH, true);
+    }
+  });
+  
+  function loadLibs(document, callback) {
+    with (Utils) {
+      //TODO: simplify, use an array
+      loadScript("http://github.com/prossman/HooverNotes/raw/master/lib/jquery.js", document, function() {
+        loadScript("http://github.com/prossman/HooverNotes/raw/master/lib/jquery.livequery.js", document, callback);
+      });
+      
+    }
+  };
+  
+  function loadUILibs(document, callback) {
+    with (Utils) {
+      loadScript(base + "script/lib/jquery-ui-1.7.2.custom.min.js", document, function() {
+        loadScript(base + "script/lib/jquery.text-overflow.js", document, function() {
+          loadScript(base + "script/lib/jquery.jeditable.js", document, function() {
+            loadScript(base + "script/lib/jquery.livequery.js", document, callback);
+          });
+        });
+      });
+    }
+  };
+};
 
-//    Libs.loadLib(slide.contentDocument, BASE_URL + "/lib/jquery.js");
-//    Libs.loadLib(slide.contentDocument, BASE_URL + "/lib/jquery.livequery.js");
-
-    // Initializes the data and GUI.
-    hnCtrl.init();
-//    init();
-
-  },
-  onSelect:   function(slide) {
-    slide.slide(SLIDEBAR_WIDTH, true);
-  }
+var slidebarvar = new SlideBar(function(){
+  jetpack.notifications.show("BASUUUUUUUUUURAAAAAAAAA");
 });
