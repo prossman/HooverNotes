@@ -21,7 +21,6 @@ with (jetpack.future) {
   import("menu");
 }
 
-
 //CONSTANTS
 /* Note types. */
 var HIGHLIGHTED_NOTE = "HIGHLIGHTED_NOTE";
@@ -29,7 +28,7 @@ var MOVED_NOTE = "MOVED_NOTE";
 var ANNOTATED_NOTE = "ANNOTATED_NOTE";
 
 // PROGRAM CONTROL
-var SLIDEBAR_WIDTH = 300;
+var SLIDEBAR_WIDTH = 800;
 var IMGBASE_URL = "http://hoovernotes.org/img/";
 var PAGEANNOTATION_ORIGINALHTML = "<!--Write your page annotation here-->";
 
@@ -79,11 +78,11 @@ var CHARPAGETITLE_MAX = 42;
 /** Length of the GUIDs in use. */
 var GUID_LENGTH = 36;
 /** Relative URL for logo for annotation notes. */
-var ANNOTATE_LOGO = "img/write_mini.png";
+var ANNOTATE_LOGO = "img/write_sm.png";
 /** Relative URL for logo for move notes. */
-var MOVE_LOGO = "img/drag_mini.png";
+var MOVE_LOGO = "img/drag_sm.png";
 /** Relative URL for logo for annotation notes. */
-var HIGHLIGHT_LOGO = "img/marker_mini.png";
+var HIGHLIGHT_LOGO = "img/marker_sm.png";
 var NOTELOGO_SUB = "note_logo";
 
 var NOTE_BUTTONS="note_buttons";
@@ -128,22 +127,19 @@ var NEWSHEETDEF_CONTAINER = "newSheetDef_container";
 
 // HTML
 // Used for injecting HTML by substituting its placeholders.
-/** HTML for the overall GUI. */
-var SLIDE_HTML="<html><head><title>HooverNotes SlideBar</title><link href='http://hoovernotes.org/CSS/hoover.css' rel='stylesheet' type='text/css' /></head><body><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div><div id='user_name' class='user_name'>YOUR NAME</div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><div><img src='http://hoovernotes.org/IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div></div></div><div id='hncontent' class='container sheets_container'></div></div></body></html>";
-var FIREBUG_HTML = "<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script>";
 /** HTML for tags container */
 var TAG_HTML="<div id='tag_container' class='tag_container'><ul id='newTag_controls' class='newTag_controls'><li class='newSheetDefInput'><input type='text' id='newTag_input' class='newSheetDefTitle_input' value='Insert a new tag or multiple tags separated by commas' /></li><li class='newSheetDefButtons'><img src='img/ok.jpg' id='newTag_button' class='button' title='Add a new Tag' alt='Add a new Tag' /></li><li class='newSheetDefButtons'><img src='img/close.png' id='closeTag_button' class='removeSheetButton button' alt='Close the Tag form' title='Close the Tag form' /></li></ul><ul id='tag_list' class='tag_list'><li class='tag_list_element'><a class='tag_list_element' href='#' title='TagX annotations' alt='TagX annotations'>tagX</a>,</li></ul></div>";
 /** HTML showing an input and controls for creating a new Sheet. */
 var NEWSHEETDEF_HTML="<div id='newSheetDef_container' class='newSheetDef_container'><ul id='newSheetDef_controls' class='newSheetDef_controls'><li class='newSheetDefInput'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input' value='Insert a new Topic title' /></li><li class='newSheetDefButtons'><img src='img/ok.jpg' id='newSheetDef_button' class='button' title='Create the Sheet' alt='Create the Sheet' /></li><li class='newSheetDefButtons'><img src='img/close.png' id='removeHnButton_sh_sheetguid' class='removeSheetButton button' alt='Cancel the Sheet' title='Cancel the Sheet' /></li></ul></div>";
 /** HTML for creating a new sheet container. */
-var SHEETCONTAINER_HTML="<li id='sheet_container_annotation' class='sheet_container_annotation'><ul id='hntitle_sh_sheetguid' class='sheet_header'><li class='sheet_header_minimize'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Maximize Sheet' title='Maximize Sheet' /></li><li class='sheet_header_title'><h1 id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'>subtitle</h1></li><li class='sheet_header_expand'><img src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /></li><li class='sheet_header_close'><img src='img/close.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></li><li class='sheet_separator_line2'></li></ul><ul id='hncontent_sh_sheetguid' class='sheet_hncontent'></ul></li>";
+var SHEETCONTAINER_HTML="<li id='hncontainer_sh_sheetguid' class='sheet_container_annotation'><ul id='hncontrols_sh_sheetguid' class='sheet_header'><li class='sheet_header_minimize'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Maximize Sheet' title='Maximize Sheet' /></li><li class='sheet_header_title'><h1 id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold hntitle'>subtitle</h1><input type='hidden' name='container_id' id='sh_sheetguid'/></li><li class='sheet_header_expand'><img src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /></li><li class='sheet_header_close'><img src='img/close.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></li><li class='sheet_separator_line2'></li></ul><ul id='hncontent_sh_sheetguid' class='sheet_hncontent'></ul></li>";
 // With text area:
 // <div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'><textarea id='editor_sh_sheetguid' class='editor_sheet' name='editor' readonly='readonly'>subtitle</textarea></div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><imgsrc='img/minimize.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet'title='Minimize Sheet' /><img style='display: none'src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet'title='Expand Sheet' /><img src='img/borrar.png'id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent'></div></div>
 /** HTML for creating a new page container. */
-var PAGE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid' class='page_hncontainer'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Minimize page' title='Minimize page' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Maximize page' title='Maximize page' /><a id='hntitle_sh_sheetguid_p_pageguid' href='pageurl' target='_blank'class='page_title' title='Open in a new tab the subtitle' alt='Open in a new tab the subtitle'>subtitle</a><img src='img/close.png' class='close_page_button button'id='removeHnButton_sh_sheetguid_p_pageguid' title='Remove the URL and annotations'alt='Remove the URL and annotations' /><ul id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent'></ul></li>";
+var PAGE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid' class='page_hncontainer'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Minimize page' title='Minimize page' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Maximize page' title='Maximize page' /><a id='hntitle_sh_sheetguid_p_pageguid' href='pageurl' target='_blank'class='page_title hntitle' title='Open in a new tab the subtitle' alt='Open in a new tab the subtitle'>subtitle</a><input type='hidden' name='container_id' id='sh_sheetguid_p_pageguid'/><img src='img/close.png' class='close_page_button button'id='removeHnButton_sh_sheetguid_p_pageguid' title='Remove the URL and annotations'alt='Remove the URL and annotations' /><ul id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent'></ul></li>";
 /** Common HTML for all notes. The notes content receives the actual 
  * type-dependent content. */
-var NOTE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid' class='note_hncontent'><ul id='hninnercontainer_sh_sheetguid_p_pageguid_n_noteguid'><li id='hncontrols_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar'><img src='img/write_sm.png' class='hncontent_toolbar_notetype' /><ul id='hnbuttons_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar_list'><li class='hncontent_toolbar_button'><img id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/close.png' class='button' /></li><li class='hncontent_toolbar_button'><img id='minimizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/minimize.jpg' class='button' /><img id='maximizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/maximize.jpg' class='button' /></li><li class='hncontent_toolbar_button'><img id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/edit.gif' class='button' /></li></ul></li><li id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_textarea'></li></ul></li>";
+var NOTE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid' class='note_hncontent'><ul id='hninnercontainer_sh_sheetguid_p_pageguid_n_noteguid'><li id='hncontrols_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar'><img src='note_logo' class='hncontent_toolbar_notetype' /><input type='hidden' name='container_id' id='sh_sheetguid_p_pageguid_n_noteguid'/><ul id='hnbuttons_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar_list'><li class='hncontent_toolbar_button'><img id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/close.png' class='button' /></li><li class='hncontent_toolbar_button'><img id='minimizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/minimize.jpg' class='button' /><img id='maximizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/expand.png' class='button' /></li><li class='hncontent_toolbar_button'><img id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/edit.gif' class='button' /></li></ul></li><li id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_textarea'></li></ul></li>";
 /** HTML for the actual content of a moved note. */
 var MOVENOTE_HTML="<span id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='span_note font_annotations'>initialvalue</span>";
 var HIGHLIGHTNOTE_HTML="<span id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='font_annotations span_note'><mark>initialvalue</mark></span>";
@@ -1599,66 +1595,51 @@ var SlideBar = function(callback) {
           <ul class='menu_buttons'
               id='iconbar'>
             <li>
-              <a href='#'
-                 class='button_write font_sheet_buttons button'
-                 id='newhoovernoteHnButton'
-                 alt='Annotate'
-                 title='Annotate'>
-                <img src='img/write_up.jpg'
-                     alt='Annotate' />
-              </a>
+              <img src='img/write_up.jpg'
+                   class='button_write font_sheet_buttons button'
+                   id='newhoovernoteHnButton'
+                   alt='Annotate'
+                   title='Annotate' />
             </li>
             <li>
               <img src='img/sep_but.jpg' />
             </li>
             <li>
-              <a href='#'
-                 class='button_highlight font_sheet_buttons button'
-                 id='markerHnButton'
-                 alt='Highlight'
-                 title='Highlight'>
-                <img src='img/marker_up.jpg'
-                     alt='Highlight content' />
-              </a>
+              <img src='img/marker_up.jpg'
+                   alt='Highlight content'
+                   class='button_highlight font_sheet_buttons button'
+                   id='markerHnButton'
+                   title='Highlight' />
             </li>
             <li>
               <img src='img/sep_but.jpg' />
             </li>
             <li>
-              <a href='#'
-                 class='button_drag font_sheet_buttons button'
-                 id='dragHnButton'
-                 alt='Move text'
-                 title='Move text'>
-                <img src='img/drag_up.jpg'
-                     alt='Move content' />
-              </a>
+              <img src='img/drag_up.jpg'
+                   alt='Move content'
+                   class='button_drag font_sheet_buttons button'
+                   id='dragHnButton'
+                   title='Move text' />
             </li>
             <li>
               <img src='img/sep_but.jpg' />
             </li>
             <li>
-              <a href='#'
-                 class='button_syncro font_sheet_buttons button'
-                 id='synchronizeHnButton'
-                 alt='Synchronize'
-                 title='Synchronize'>
-                <img src='img/syncro_up.jpg'
-                     alt='Synchronize annotations' />
-              </a>
+              <img src='img/syncro_up.jpg'
+                   alt='Synchronize annotations'
+                   class='button_syncro font_sheet_buttons button'
+                   id='synchronizeHnButton'
+                   title='Synchronize' />
             </li>
             <li>
               <img src='img/sep_but.jpg' />
             </li>
             <li>
-              <a href='#'
-                 class='button_tags font_sheet_buttons button'
-                 id='tagHnButton'
-                 alt='Tag it!'
-                 title='Tag it!'>
-                <img src='img/tags_up.jpg'
-                     alt='Tag topics and annotations' />
-              </a>
+              <img src='img/tags_up.jpg'
+                   alt='Tag topics and annotations'
+                   class='button_tags font_sheet_buttons button'
+                   id='tagHnButton'
+                   title='Tag it!' />
             </li>
             <li>
               <img src='img/sep_but.jpg' />
