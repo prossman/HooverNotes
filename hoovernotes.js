@@ -1,5 +1,6 @@
 /*
  * HooverNotes Jetpack  
+ * http://hoovernotes.org
  *
  * Developed by Marc Pous and Philipp Rossmanith 
  * for the Mozilla Jetpack for Learning Design Challenge 
@@ -28,8 +29,8 @@ var MOVED_NOTE = "MOVED_NOTE";
 var ANNOTATED_NOTE = "ANNOTATED_NOTE";
 
 // PROGRAM CONTROL
-var SLIDEBAR_WIDTH = 800;
-var IMGBASE_URL = "http://hoovernotes.org/HN/img/";
+var SLIDEBAR_WIDTH = 300;
+var IMGBASE_URL = "http://hoovernotes.org/img/";
 var PAGEANNOTATION_ORIGINALHTML = "<!--Write your page annotation here-->";
 
 // IDs.
@@ -131,22 +132,22 @@ var NEWSHEETDEF_CONTAINER = "newSheetDef_container";
 var SLIDE_HTML="<html><head><title>HooverNotes SlideBar</title><link href='http://hoovernotes.org/CSS/hoover.css' rel='stylesheet' type='text/css' /></head><body><div id='hooverNotesSlide_container' class='hooverNotesSlide_container'><div id='menu_container' class='menu_container'><div id='user_container' class='user_container'><div id='user_image' class='user_image'><img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='34px' alt='Your picture!' title='Your picture!' /></div><div id='user_name' class='user_name'>YOUR NAME</div></div><div id='menuContainer_buttons' class='button menuContainer_buttons'><div><img src='http://hoovernotes.org/IMG/new_sheet.png' id='newHooverSheet_button' alt='Create a new Sheet' title='Create a new Sheet' /></div></div></div><div id='hncontent' class='container sheets_container'></div></div></body></html>";
 var FIREBUG_HTML = "<script><![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]></script>";
 /** HTML for tags container */
-var TAG_HTML="<div id='newTag_container' class='newTag_container'><input type='text' id='newTag_input' value='tag3' /><button id='newTag_button'>C</button><br /><span id='tag'>tag1</span>, <span id='tag'>tag2</span></div>";
+var TAG_HTML="<div id='tag_container' class='tag_container'><ul id='newTag_controls' class='newTag_controls'><li class='newSheetDefInput'><input type='text' id='newTag_input' class='newSheetDefTitle_input' value='Insert a new tag or multiple tags separated by commas' /></li><li class='newSheetDefButtons'><img src='img/ok.jpg' id='newTag_button' class='button' title='Add a new Tag' alt='Add a new Tag' /></li><li class='newSheetDefButtons'><img src='img/close.png' id='closeTag_button' class='removeSheetButton button' alt='Close the Tag form' title='Close the Tag form' /></li></ul><ul id='tag_list' class='tag_list'><li class='tag_list_element'><a class='tag_list_element' href='#' title='TagX annotations' alt='TagX annotations'>tagX</a>,</li></ul></div>";
 /** HTML showing an input and controls for creating a new Sheet. */
-var NEWSHEETDEF_HTML="<div id='newSheetDef_container' class='newSheetDef_container'><input type='text' id='newSheetDefTitle_input' value='Untitled' /><div id='newSheetDef_controls' class='newSheetDef_controls'><img src='img/confirmar_but.png' id='newSheetDef_button' title='Create the Sheet' alt='Create the Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeSheetButton' alt='Remove the Sheet' title='Remove the Sheet' /></div><div id='newSheet_down'><img src='img/sombra_new_sheet.png' /></div></div>";
+var NEWSHEETDEF_HTML="<div id='newSheetDef_container' class='newSheetDef_container'><ul id='newSheetDef_controls' class='newSheetDef_controls'><li class='newSheetDefInput'><input type='text' id='newSheetDefTitle_input' class='newSheetDefTitle_input' value='Insert a new Topic title' /></li><li class='newSheetDefButtons'><img src='img/ok.jpg' id='newSheetDef_button' class='button' title='Create the Sheet' alt='Create the Sheet' /></li><li class='newSheetDefButtons'><img src='img/close.png' id='removeHnButton_sh_sheetguid' class='removeSheetButton button' alt='Cancel the Sheet' title='Cancel the Sheet' /></li></ul></div>";
 /** HTML for creating a new sheet container. */
-var SHEETCONTAINER_HTML="<div id='hncontainer_sh_sheetguid'class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'>subtitle</div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid' class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid' class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button' alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent' ></div></div>";
+var SHEETCONTAINER_HTML="<li id='sheet_container_annotation' class='sheet_container_annotation'><ul id='hntitle_sh_sheetguid' class='sheet_header'><li class='sheet_header_minimize'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet' title='Minimize Sheet' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Maximize Sheet' title='Maximize Sheet' /></li><li class='sheet_header_title'><h1 id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'>subtitle</h1></li><li class='sheet_header_expand'><img src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet' title='Expand Sheet' /></li><li class='sheet_header_close'><img src='img/close.png' id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></li><li class='sheet_separator_line2'></li></ul><ul id='hncontent_sh_sheetguid' class='sheet_hncontent'></ul></li>";
 // With text area:
 // <div id='hncontainer_sh_sheetguid' class='hncontainer sheet_container'><div id='sheetHeader' class='sheetHeader'><div id='hntitle_sh_sheetguid' class='sheetTitle lucida_bold'><textarea id='editor_sh_sheetguid' class='editor_sheet' name='editor' readonly='readonly'>subtitle</textarea></div><div id='sheetTitleButtons_sheetguid' class='button min_max_rem_buttons'><imgsrc='img/minimize.png' id='minimizeHnButton_sh_sheetguid'class='minimizeHnButton hnbutton button' alt='Minimize Sheet'title='Minimize Sheet' /><img style='display: none'src='img/expand.png' id='maximizeHnButton_sh_sheetguid'class='expandHnButton hnbutton button' alt='Expand Sheet'title='Expand Sheet' /><img src='img/borrar.png'id='removeHnButton_sh_sheetguid' class='removeHnButton hnbutton button'alt='Remove Sheet' title='Remove Sheet' /></div><div id='separador'><img src='img/separador.png'></div></div><div id='hncontent_sh_sheetguid' class='hncontent sheet_hncontent'></div></div>
 /** HTML for creating a new page container. */
-var PAGE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid' class='hncontainer page_hncontainer page_container'><div id='hncontrols_sh_sheetguid_p_pageguid' class='page_hncontrols hncontrols'><div id='hntitle_sh_sheetguid_p_pageguid' class='page_hntitle pageTitle'><a href='pageurl' target='_blank' class='pageTitle_link' alt='Open page in new tab'>subtitle</a></div><div id='hnbuttons_sh_sheetguid_p_pageguid' class='page_hnbuttons buttons min_max_rem_buttons'><img src='img/minimize.png' id='minimizeHnButton_sh_sheetguid_p_pageguid' class='button minimizePage_button' alt='Minimize the page s annotations' title='Minimize the page s annotations' /><img style='display:none' src='img/expand.png' id='maximizeHnButton_sh_sheetguid_p_pageguid' class='button openURLatTab_button' alt='Maximize the page s annotation' title='Maximize the page s annotations' /><img src='img/borrar.png' id='removeHnButton_sh_sheetguid_p_pageguid' class='button removePage_button' alt='Remove the page s annotations' title='Remove the page s annotations' /></div></div><div id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent hncontent'></div></div>";
+var PAGE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid' class='page_hncontainer'><img src='img/arrow02.png' id='minimizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Minimize page' title='Minimize page' /><img src='img/arrow01.png' id='maximizeHnButton_sh_sheetguid_p_pageguid'class='minimaze_page_button button' alt='Maximize page' title='Maximize page' /><a id='hntitle_sh_sheetguid_p_pageguid' href='pageurl' target='_blank'class='page_title' title='Open in a new tab the subtitle' alt='Open in a new tab the subtitle'>subtitle</a><img src='img/close.png' class='close_page_button button'id='removeHnButton_sh_sheetguid_p_pageguid' title='Remove the URL and annotations'alt='Remove the URL and annotations' /><ul id='hncontent_sh_sheetguid_p_pageguid' class='page_hncontent'></ul></li>";
 /** Common HTML for all notes. The notes content receives the actual 
  * type-dependent content. */
-var NOTE_HTML="<div id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid'><div id='note_controls' class='note_controls'><table class='note_buttons'><tr class='note_controls_column'><td class='note_controls_type'><img src='note_logo' id='note_controls_type'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td class='note_controls_void'></td></tr><tr class='note_controls_column'><td id='note_controls_edit'><img src='img/edit.png' id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button editNote_button' alt='Edit the annotation' title='Edit the annotation' /></td></tr><tr class='note_controls_column'><td id='note_controls_link'><img src='img/link.png' id='linkHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button linkNotePage_button' alt='Visualize the annotations into the URL context' title='Visualize the annotations into the URL context' /></td></tr><tr class='note_controls_column'><td id='note_controls_remove'><img src='img/eliminar.png' id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' class='button removeNote_button' alt='Remove the annotation' title='Remove the annotation' /></td></tr></table></div><div id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='annotateNoteContent'></div><div id='page_down'><img src='img/sombra_new_sheet.png'/></div></div>";
+var NOTE_HTML="<li id='hncontainer_sh_sheetguid_p_pageguid_n_noteguid' class='note_hncontent'><ul id='hninnercontainer_sh_sheetguid_p_pageguid_n_noteguid'><li id='hncontrols_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar'><img src='img/write_sm.png' class='hncontent_toolbar_notetype' /><ul id='hnbuttons_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_toolbar_list'><li class='hncontent_toolbar_button'><img id='removeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/close.png' class='button' /></li><li class='hncontent_toolbar_button'><img id='minimizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/minimize.jpg' class='button' /><img id='maximizeHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/maximize.jpg' class='button' /></li><li class='hncontent_toolbar_button'><img id='editHnButton_sh_sheetguid_p_pageguid_n_noteguid' src='img/edit.gif' class='button' /></li></ul></li><li id='hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='hncontent_textarea'></li></ul></li>";
 /** HTML for the actual content of a moved note. */
-var MOVENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
-var HIGHLIGHTNOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'>initialvalue</div>";
-var ANNOTATENOTE_HTML="<div class='note_hncontent' id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'><textarea id='editor_sh_sheetguid_p_pageguid_n_noteguid' class='textarea_note' name='editor'>initialvalue</textarea><br /></div>";
+var MOVENOTE_HTML="<span id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='span_note font_annotations'>initialvalue</span>";
+var HIGHLIGHTNOTE_HTML="<span id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid' class='font_annotations span_note'><mark>initialvalue</mark></span>";
+var ANNOTATENOTE_HTML="<textarea id='note_hncontent_sh_sheetguid_p_pageguid_n_noteguid'class='font_annotations textarea_note'>initialvalue</textarea>";
 
 /**
  * Encapsulates different utility functions.
@@ -1068,7 +1069,7 @@ function HooverNotesView(slideBar){
       });
       
       registerEvent("click", HELP_BUTTON, function(e){
-        Utils.log(5, "TODO: HELP");
+        Utils.log(2, "TODO: HELP");
       });
       
       registerEvent("click", NEWHOOVERSHEET_BUTTON, function() {
@@ -1171,7 +1172,8 @@ function HooverNotesController(){
     me.view.init();
     if (me.user && me.user.logged){
       // Get the sheets from storage.
-      sheetsArray = me.storage.getHooverSheets(me.user);
+    	sheetsArray = me.storage.getHooverSheets(me.user);
+//    	sheetsArray = null;
       // Pass the sheets plus the ID of the active sheet.
       if (sheetsArray && sheetsArray.length > 0){
         Utils.log(1, "ctrl.initAuthenticatedUser: " + sheetsArray.length + " sheets");
@@ -1555,64 +1557,132 @@ var SlideBar = function(callback) {
   jetpack.slideBar.append( {
   //  html : SLIDE_HTML,
     html : <html>
-      <head>
-        <title>HooverNotes SlideBar</title>
-        <base href='http://hoovernotes.org/HN/' />
-        <link href='http://hoovernotes.org/HN/css/hooverStyles.css' rel='stylesheet' type='text/css' />
-      </head>
-      <body>
-        <div id='hooverNotesSlide_container' class='hooverNotesSlide_container'>
-          <div id='menu_container' class='menu_container'>
-        <div class='menu_tabs_container'>
-          <table class='menu_tabs'>
-            <tr><td class='menu_piece' id='hnMainMenu'></td><td class='menu_help' id='helpHnButton'></td></tr>
-          </table>
+  <head>
+    <title>HooverNotes plugin</title>
+    <base href='http://hoovernotes.org/' />
+    <link href='http://hoovernotes.org/CSS/hoover.css'
+          rel='stylesheet'
+          type='text/css' />
+  </head>
+  <body>
+    <div id='hooverNotesSlide_container'
+         class='hooverNotesSlide_container'>
+      <div id='header'
+           class='menu_container'>
+        <!--<div class='menu_help button'
+             id='helpHnButton'></div> -->
+        <div class='user_container'>
+          <img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG'
+               class='user_pic'
+               width='47px'
+               alt='Your picture!'
+               title='Your picture!' />
+          <h2 class='username'>Your name</h2>
+          <a href='#'
+             class='signout'
+             id='signout'>Sign out</a>
         </div>
-              <div id='user_container' class='user_container'>
-          <div id='hoovernotes' class='hoovernotes'>HooverNotes<!--<img src='img/hoovernotes-title.png' title='Ho(o)verNotes!' alt='Ho(o)verNotes!' />--></div>
-                <div id='user_image' class='user_image'>
-            <div class='user_pic_frame'>
-                      <img src='http://a1.twimg.com/profile_images/53241754/Marc_bigger.JPG' width='47px' alt='Your picture!' title='Your picture!' />
-            </div>
-                </div>
-          <div id='user_name' class='user_name'>Your Name</div>
-              </div>
-        <div id='menuContainer_buttons' class='toolsContainer'>
-          <div id='notes_pad_container' class='menuContainer_buttons notes_pad_container'>
-            <div class='notes_pad'>
-              <img src='img/new_note.png' id='newhooversheetHnButton' class='newSheetButton button' title='Create a new Sheet' alt='Create a new Sheet' />
-              <img src='img/search_note.png' id='searchHooversheetHnButton' class='searchSheetButton button' title='Search a Sheet' alt='Search a Sheet'/>
-            </div>
-          </div>
-          <div id='hnbuttons_sh_sheetguid' class='hnbuttons'>
-            <table class='sheet_buttons'>
-              <tr>
-                <td class='font_sheet_buttons'>Write</td>
-                <td class='font_sheet_buttons'>Highlight</td>
-                <td class='font_sheet_buttons'>Drag</td>
-                <td class='font_sheet_buttons'>Syncro</td>
-                <td class='font_sheet_buttons'>Tags</td>
-              </tr>
-              <tr>
-                <td class='button_write font_sheet_buttons button' id='newhoovernoteHnButton'></td>
-                <td class='button_highlight font_sheet_buttons button' id='markerHnButton'></td>
-                <td class='button_drag font_sheet_buttons button' id='dragHnButton'></td>
-                <td class='button_syncro font_sheet_buttons button' id='synchronizeHnButton'></td>
-                <td class='button_tags font_sheet_buttons button' id='tagHnButton'></td>
-              </tr>
-            </table>
-          </div>
-            </div> <!-- toolsContainer-->
-        <div class='menu_down'><img src='img/menu_down.png' /></div>
-      </div> <!-- menu_container-->
-          <div id='hncontent' class='container sheets_container'></div>
-        </div> <!-- hooverNotesSlide_contianer -->
-      </body>
-      <script>
-        <![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]>
-    </script>
-    </html>,
-    icon: "http://hoovernotes.org/HN/img/write_up.png",
+        <div class='notes_pad'>
+          <img src='img/new_note.png'
+               id='newhooversheetHnButton'
+               class='newSheetButton button'
+               title='Create a new Sheet'
+               alt='Create a new Sheet' />
+          <img src='img/search.png'
+               id='searchHooversheetHnButton'
+               class='searchSheetButton button'
+               title='Search a topic'
+               alt='Search a topic' />
+        </div>
+        <div id='menuContainer_buttons'
+             class='toolsContainer'>
+          <ul class='menu_buttons'
+              id='iconbar'>
+            <li>
+              <a href='#'
+                 class='button_write font_sheet_buttons button'
+                 id='newhoovernoteHnButton'
+                 alt='Annotate'
+                 title='Annotate'>
+                <img src='img/write_up.jpg'
+                     alt='Annotate' />
+              </a>
+            </li>
+            <li>
+              <img src='img/sep_but.jpg' />
+            </li>
+            <li>
+              <a href='#'
+                 class='button_highlight font_sheet_buttons button'
+                 id='markerHnButton'
+                 alt='Highlight'
+                 title='Highlight'>
+                <img src='img/marker_up.jpg'
+                     alt='Highlight content' />
+              </a>
+            </li>
+            <li>
+              <img src='img/sep_but.jpg' />
+            </li>
+            <li>
+              <a href='#'
+                 class='button_drag font_sheet_buttons button'
+                 id='dragHnButton'
+                 alt='Move text'
+                 title='Move text'>
+                <img src='img/drag_up.jpg'
+                     alt='Move content' />
+              </a>
+            </li>
+            <li>
+              <img src='img/sep_but.jpg' />
+            </li>
+            <li>
+              <a href='#'
+                 class='button_syncro font_sheet_buttons button'
+                 id='synchronizeHnButton'
+                 alt='Synchronize'
+                 title='Synchronize'>
+                <img src='img/syncro_up.jpg'
+                     alt='Synchronize annotations' />
+              </a>
+            </li>
+            <li>
+              <img src='img/sep_but.jpg' />
+            </li>
+            <li>
+              <a href='#'
+                 class='button_tags font_sheet_buttons button'
+                 id='tagHnButton'
+                 alt='Tag it!'
+                 title='Tag it!'>
+                <img src='img/tags_up.jpg'
+                     alt='Tag topics and annotations' />
+              </a>
+            </li>
+            <li>
+              <img src='img/sep_but.jpg' />
+            </li>
+          </ul>
+        </div>
+        <!-- toolsContainer-->
+      </div>
+      <!-- menu_container-->
+      <!-- NEWSHEETDEF -->
+      <!-- SEARCHER HTML -->
+      <div id='hncontent'
+           class='container sheets_container'>
+        <ul id='hncontainer_sh_sheetguid'
+            class='sheet_container_list'></ul>
+      </div>
+    </div>
+    <!-- hooverNotesSlide_contianer -->
+  </body>
+  <script>
+    <![CDATA[var firebug=document.createElement('script');firebug.setAttribute('src','http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);]]>
+</script>
+</html>,
+    icon: "http://hoovernotes.org/img/logo.jpg",
     persist : true,
     width : SLIDEBAR_WIDTH,
     onReady : function(slide) {
