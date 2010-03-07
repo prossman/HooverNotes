@@ -434,9 +434,11 @@
     
     this.removeNoteById = function (pageId, noteId){
       var ind = me.findPageById(pageId);
-      if (ind > 0){
+      if (ind > -1){
+        Utils.log(2, "sheet.removeNoteById: " + pageId + " found.");
         return me.pages[ind].removeNoteById(noteId);
       } else {
+        Utils.log(2, "sheet.removeNoteById: " + pageId + " not found.");
         return false;
       }
     };
@@ -466,6 +468,7 @@
   
   /* HooverNote */
   function HooverNote(user, originalHtml, isHighlighted, color, annotation) {
+
     var me = this;
     this.noteAuthor = user;
     this.noteCreationTime = new Date();
@@ -536,7 +539,7 @@
       if (me.noteArray && (me.noteArray.length > 0)){
         for (var i = 0; i < me.noteArray.length; ++i){
           if (me.noteArray[i]){
-            if (me.noteArray[i].pageGuid == noteId){
+            if (me.noteArray[i].noteGuid == noteId){
               Utils.log(1, "HooverPage.findNoteById: " + noteId + " found");
               return i;
             }
@@ -554,9 +557,10 @@
       var index = me.findNoteById(noteId);
       if (index > -1){
         me.noteArray.splice(index, 1);
+        Utils.log(2, "page.removeNoteById: Note " + noteId + " was removed.");
         return true;
       }
-      Utils.log(1, "Note " + noteId + " couldn't be removed.");
+      Utils.log(2, "page.removeNoteById: Note " + noteId + " couldn't be removed.");
       return false;
     };
   }
@@ -882,9 +886,13 @@
       
       // Type-dependent injection
       var htmlStr;
+      var noteTmp = note.noteOriginalHtml;
       if (note.getType() == ANNOTATED_NOTE){
         Utils.log(1, "ANNOTATE");
         htmlStr = Utils.replaceIDsInHTMLStr(sheetId, pageId, note.noteGuid, ANNOTATENOTE_HTML);
+        if (note.noteAnnotation){
+          noteTmp = note.noteAnnotation;
+        }
       } else {
         if (note.getType() == MOVED_NOTE){
           Utils.log(1, "MOVE");
@@ -896,10 +904,11 @@
           if (jetpack.selection.html){
             jetpack.selection.html = "<mark style='background:" + note.noteColor + "'>" + jetpack.selection.html + "</mark>";
             note.noteOriginalHtml = "<mark style='background:" + note.noteColor + "'>" + jetpack.selection.html + "</mark>";
+            noteTmp = note.noteOriginalHtml;
           }
         }
       }
-      htmlStr = htmlStr.replace(NOTEINITIALVALUE_SUB, note.noteOriginalHtml);
+      htmlStr = htmlStr.replace(NOTEINITIALVALUE_SUB, noteTmp);
       Utils.log(0, "view.injectAndRegisterNote: injecting " + htmlStr + " to " + idStr);
       appendElemToId(htmlStr, idStr);
       
@@ -1277,30 +1286,31 @@
     }
     
     this.updateNote = function (sheetId, pageId, noteId, contentStr){
-      Utils.log(1, "ctrl.update: " + sheetId + "|" + pageId + "|" + noteId);
+      Utils.log(1, "ctrl.update: note " + noteId + " with " + contentStr);
       
       // Find the sheet.
       var ind = findSheetById(sheetId);
       
       if (ind < 0) {
-        Utils.log(1, "ctrl.remove: Trying to update non-existent sheet " + sheetId);
+        Utils.log(1, "ctrl.update: Trying to update non-existent sheet " + sheetId);
         return false;
       }
       
       var pageInd = sheetsArray[ind].findPageById(pageId);
       if (pageInd < 0) {
-        Utils.log(1, "ctrl.remove: Trying to update non-existent page " + pageId);
+        Utils.log(1, "ctrl.update: Trying to update non-existent page " + pageId);
         return false;
       }
       
       var noteInd = sheetsArray[ind].pages[pageInd].findNoteById(noteId);
       
       if (noteInd < 0) {
-        Utils.log(1, "ctrl.remove: Trying to update non-existent note " + noteId);
+        Utils.log(1, "ctrl.update: Trying to update non-existent note " + noteId);
         return false;
       }
       
       sheetsArray[ind].pages[pageInd].noteArray[noteInd].noteAnnotation=contentStr;
+      Utils.log(1, "ctrl.update: Updated note with " + sheetsArray[ind].pages[pageInd].noteArray[noteInd].noteAnnotation);
       return true;
     }
     
@@ -1436,7 +1446,7 @@
       }
       
       var sheetInd = findSheetById(sheetId);
-      Utils.log(2, output + " and found " + sheetInd + " for " + sheetId);
+      Utils.log(1, output + " and found " + sheetInd + " for " + sheetId);
       if (sheetInd < 0){
         return false;
       } 
@@ -1531,8 +1541,8 @@
       Utils.log(1, "syncNote: " + sheetId + "|" + pageId + "|" + note);
     };
     
-    me.syncAll = function(sheetsArray){
-      Utils.log(0, "storage.syncAll: synching " + sheetsArray.length + " sheets");
+    this.syncAll = function(sheetsArray){
+      Utils.log(1, "storage.syncAll: synching " + sheetsArray.length + " sheets");
   //    var userJSON = JSONUtils.userToJSON(hnCtrl.user);
       myStorage.jsonSheetStrs = JSON.stringify(sheetsArray);
       myStorage.sync();
@@ -1768,13 +1778,13 @@
             annotateAsNote(jetpack.selection.text, jetpack.selection.html);
           }
         });
-    //    menu.add( {
-    //      label : "Sheet to JSON",
-    //      icon : IMGBASE_URL + "write_no.png",
-    //      command : function(menuitem) {
-    //        annotateAsNote(JSON.stringify(hnCtrl.getActiveSheet()), JSON.stringify(hnCtrl.getActiveSheet()));
-    //      }
-    //    });
+        menu.add( {
+          label : "Sheets to JSON",
+          icon : IMGBASE_URL + "write_no.png",
+          command : function(menuitem) {
+            annotateAsNote(JSON.stringify(hnCtrl.getActiveSheet()), JSON.stringify(hnCtrl.getActiveSheet()));
+          }
+        });
         menu.add( {
           label : "Storage JSON",
           icon : IMGBASE_URL + "write_no.png",
