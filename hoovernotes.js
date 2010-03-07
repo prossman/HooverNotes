@@ -404,7 +404,7 @@
       return page;
     };
     
-    function findPageById(pageId){
+    this.findPageById = function(pageId){
       if (me.pages && (me.pages.length > 0)){
         for (var i = 0; i < me.pages.length; ++i){
           if (me.pages[i]){
@@ -423,7 +423,7 @@
     };
     
     this.removePageById = function(pageId){
-      var index = findPageById(pageId);
+      var index = me.findPageById(pageId);
       if (index > -1){
         me.pages.splice(index, 1);
         return true;
@@ -433,7 +433,7 @@
     };
     
     this.removeNoteById = function (pageId, noteId){
-      var ind = findPageById(pageId);
+      var ind = me.findPageById(pageId);
       if (ind > 0){
         return me.pages[ind].removeNoteById(noteId);
       } else {
@@ -532,7 +532,7 @@
       }
     }
     
-    function findNoteById (noteId){
+    this.findNoteById = function (noteId){
       if (me.noteArray && (me.noteArray.length > 0)){
         for (var i = 0; i < me.noteArray.length; ++i){
           if (me.noteArray[i]){
@@ -551,7 +551,7 @@
     };
     
     this.removeNoteById = function(noteId){
-      var index = findNoteById(noteId);
+      var index = me.findNoteById(noteId);
       if (index > -1){
         me.noteArray.splice(index, 1);
         return true;
@@ -722,6 +722,12 @@
     function saveAndDisableAnnotation (idStr){
       Utils.log(1, "view.saveAndDisableAnnotation: " + idStr);
       $("#" + idStr, me.slideBar.contentDocument).attr("readonly", "readonly");
+      // Get content. Split IDs and call control's update.
+      var contentStr = $("#" + idStr, me.slideBar.contentDocument).val();
+      var sheetId = Utils.extractId(idStr, SHEETGUID_PRE);
+      var pageId = Utils.extractId(idStr, PAGEGUID_PRE);
+      var noteId = Utils.extractId(idStr, NOTEGUID_PRE);
+      me.control.updateNote(sheetId, pageId, noteId, contentStr);
     };
     
     this.setSelection = function(text, html){
@@ -1268,6 +1274,34 @@
           return true;
         }
       }
+    }
+    
+    this.updateNote = function (sheetId, pageId, noteId, contentStr){
+      Utils.log(1, "ctrl.update: " + sheetId + "|" + pageId + "|" + noteId);
+      
+      // Find the sheet.
+      var ind = findSheetById(sheetId);
+      
+      if (ind < 0) {
+        Utils.log(1, "ctrl.remove: Trying to update non-existent sheet " + sheetId);
+        return false;
+      }
+      
+      var pageInd = sheetsArray[ind].findPageById(pageId);
+      if (pageInd < 0) {
+        Utils.log(1, "ctrl.remove: Trying to update non-existent page " + pageId);
+        return false;
+      }
+      
+      var noteInd = sheetsArray[ind].pages[pageInd].findNoteById(noteId);
+      
+      if (noteInd < 0) {
+        Utils.log(1, "ctrl.remove: Trying to update non-existent note " + noteId);
+        return false;
+      }
+      
+      sheetsArray[ind].pages[pageInd].noteArray[noteInd].noteAnnotation=contentStr;
+      return true;
     }
     
     function findSheetById (sheetId){
